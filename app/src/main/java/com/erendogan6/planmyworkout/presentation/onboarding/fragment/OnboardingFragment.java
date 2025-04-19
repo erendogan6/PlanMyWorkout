@@ -81,13 +81,24 @@ public class OnboardingFragment extends Fragment {
     }
 
     private void navigateBasedOnChoice(OnboardingChoice choice) {
-        // Save the choice and navigate to the home screen
-        // In a real app, we would save the choice to Firestore here
+        // Save the choice to Firestore (in a real app)
+        // For now, just navigate based on the choice
 
-        // Navigate to the home screen
-        Intent intent = new Intent(requireActivity(), HomeActivity.class);
-        startActivity(intent);
-        requireActivity().finish(); // Close the onboarding activity
+        if (getActivity() instanceof BaseActivity) {
+            BaseActivity baseActivity = (BaseActivity) getActivity();
+
+            switch (choice) {
+                case READY_MADE:
+                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.ReadyMadePlansFragment(), false);
+                    break;
+                case MANUAL:
+                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.CreatePlanFragment(), false);
+                    break;
+                case AI:
+                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.AiPlanGenerationFragment(), false);
+                    break;
+            }
+        }
     }
 
     @Override
