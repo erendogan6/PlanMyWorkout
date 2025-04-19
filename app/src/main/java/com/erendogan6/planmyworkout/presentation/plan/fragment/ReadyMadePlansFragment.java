@@ -8,17 +8,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.erendogan6.planmyworkout.databinding.FragmentReadyMadePlansBinding;
 import com.erendogan6.planmyworkout.domain.model.WorkoutPlan;
-import com.erendogan6.planmyworkout.domain.usecase.plan.GetReadyMadePlansUseCase;
 import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
 import com.erendogan6.planmyworkout.presentation.plan.adapter.WorkoutPlanAdapter;
-
-import java.util.List;
-
-import javax.inject.Inject;
+import com.erendogan6.planmyworkout.presentation.plan.viewmodel.ReadyMadePlansViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -31,67 +28,63 @@ public class ReadyMadePlansFragment extends Fragment implements WorkoutPlanAdapt
 
     private FragmentReadyMadePlansBinding binding;
     private WorkoutPlanAdapter adapter;
-    
-    @Inject
-    GetReadyMadePlansUseCase getReadyMadePlansUseCase;
-    
+    private ReadyMadePlansViewModel viewModel;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentReadyMadePlansBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
-    
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(ReadyMadePlansViewModel.class);
+
         // Set up the RecyclerView
         setupRecyclerView();
-        
+
+        // Observe ViewModel
+        observeViewModel();
+
         // Load workout plans
-        loadWorkoutPlans();
+        viewModel.loadWorkoutPlans();
     }
-    
+
     private void setupRecyclerView() {
         binding.rvWorkoutPlans.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new WorkoutPlanAdapter(null, this);
         binding.rvWorkoutPlans.setAdapter(adapter);
     }
-    
-    private void loadWorkoutPlans() {
-        // Show loading state
-        showLoading(true);
-        
-        // Get workout plans from use case
-        List<WorkoutPlan> plans = getReadyMadePlansUseCase.execute();
-        
-        // Update UI based on result
-        if (plans != null && !plans.isEmpty()) {
-            adapter.updatePlans(plans);
-            showEmptyState(false);
-        } else {
-            showEmptyState(true);
-        }
-        
-        // Hide loading state
-        showLoading(false);
+
+    private void observeViewModel() {
+        // Observe workout plans
+        viewModel.getWorkoutPlans().observe(getViewLifecycleOwner(), plans -> {
+            if (plans != null) {
+                adapter.updatePlans(plans);
+            }
+        });
+
+        // Observe loading state
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (binding != null) {
+                binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                binding.rvWorkoutPlans.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        // Observe empty state
+        viewModel.getIsEmpty().observe(getViewLifecycleOwner(), isEmpty -> {
+            if (binding != null) {
+                binding.tvEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                binding.rvWorkoutPlans.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+            }
+        });
     }
-    
-    private void showLoading(boolean isLoading) {
-        if (binding != null) {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            binding.rvWorkoutPlans.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        }
-    }
-    
-    private void showEmptyState(boolean isEmpty) {
-        if (binding != null) {
-            binding.tvEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-            binding.rvWorkoutPlans.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-        }
-    }
-    
+
     @Override
     public void onPlanSelected(WorkoutPlan plan) {
         // Navigate to WorkoutPlanDetailFragment with the selected plan
@@ -99,13 +92,13 @@ public class ReadyMadePlansFragment extends Fragment implements WorkoutPlanAdapt
         Bundle args = new Bundle();
         args.putSerializable(WorkoutPlanDetailFragment.ARG_WORKOUT_PLAN, plan);
         detailFragment.setArguments(args);
-        
+
         // Use the BaseActivity to handle fragment transactions
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).replaceFragment(detailFragment, true);
         }
     }
-    
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
