@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.domain.model.Result;
-import com.erendogan6.planmyworkout.domain.repository.AuthRepository;
+import com.erendogan6.planmyworkout.domain.usecase.auth.RegisterParams;
+import com.erendogan6.planmyworkout.domain.usecase.auth.RegisterUseCase;
 
 import javax.inject.Inject;
 
@@ -18,18 +19,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class RegisterViewModel extends ViewModel {
 
-    private final AuthRepository authRepository;
+    private final RegisterUseCase registerUseCase;
 
     private final MutableLiveData<Result<Boolean>> _registerResult = new MutableLiveData<>();
 
     /**
      * Constructor for RegisterViewModel.
      *
-     * @param authRepository Repository for authentication operations
+     * @param registerUseCase Use case for registration operations
      */
     @Inject
-    public RegisterViewModel(AuthRepository authRepository) {
-        this.authRepository = authRepository;
+    public RegisterViewModel(RegisterUseCase registerUseCase) {
+        this.registerUseCase = registerUseCase;
     }
 
     /**
@@ -52,7 +53,8 @@ public class RegisterViewModel extends ViewModel {
         _registerResult.setValue(Result.loading(false));
 
         // Execute register use case and observe the result
-        LiveData<Result<Boolean>> resultLiveData = authRepository.register(email, password);
+        RegisterParams params = new RegisterParams(email, password);
+        LiveData<Result<Boolean>> resultLiveData = registerUseCase.execute(params);
         resultLiveData.observeForever(result -> {
             if (result != null) {
                 _registerResult.setValue(result);

@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.domain.model.Result;
-import com.erendogan6.planmyworkout.domain.usecase.LoginUserUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.ResetPasswordUseCase;
+import com.erendogan6.planmyworkout.domain.usecase.auth.LoginParams;
+import com.erendogan6.planmyworkout.domain.usecase.auth.LoginUseCase;
+import com.erendogan6.planmyworkout.domain.usecase.auth.ResetPasswordParams;
+import com.erendogan6.planmyworkout.domain.usecase.auth.ResetPasswordUseCase;
 
 import javax.inject.Inject;
 
@@ -19,7 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class LoginViewModel extends ViewModel {
 
-    private final LoginUserUseCase loginUserUseCase;
+    private final LoginUseCase loginUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
 
     private final MutableLiveData<Result<Boolean>> _loginResult = new MutableLiveData<>();
@@ -28,12 +30,12 @@ public class LoginViewModel extends ViewModel {
     /**
      * Constructor for LoginViewModel.
      *
-     * @param loginUserUseCase     Use case for login operation
+     * @param loginUseCase         Use case for login operation
      * @param resetPasswordUseCase Use case for password reset operation
      */
     @Inject
-    public LoginViewModel(LoginUserUseCase loginUserUseCase, ResetPasswordUseCase resetPasswordUseCase) {
-        this.loginUserUseCase = loginUserUseCase;
+    public LoginViewModel(LoginUseCase loginUseCase, ResetPasswordUseCase resetPasswordUseCase) {
+        this.loginUseCase = loginUseCase;
         this.resetPasswordUseCase = resetPasswordUseCase;
     }
 
@@ -66,7 +68,8 @@ public class LoginViewModel extends ViewModel {
         _loginResult.setValue(Result.loading(false));
 
         // Execute login use case and observe the result
-        LiveData<Result<Boolean>> resultLiveData = loginUserUseCase.execute(email, password);
+        LoginParams params = new LoginParams(email, password);
+        LiveData<Result<Boolean>> resultLiveData = loginUseCase.execute(params);
         resultLiveData.observeForever(result -> {
             if (result != null) {
                 _loginResult.setValue(result);
@@ -84,7 +87,8 @@ public class LoginViewModel extends ViewModel {
         _resetPasswordResult.setValue(Result.loading(false));
 
         // Execute reset password use case and observe the result
-        LiveData<Result<Boolean>> resultLiveData = resetPasswordUseCase.execute(email);
+        ResetPasswordParams params = new ResetPasswordParams(email);
+        LiveData<Result<Boolean>> resultLiveData = resetPasswordUseCase.execute(params);
         resultLiveData.observeForever(result -> {
             if (result != null) {
                 _resetPasswordResult.setValue(result);
