@@ -65,7 +65,7 @@
         android:label="Workout Plan Detail"
         tools:layout="@layout/fragment_workout_plan_detail">
         <argument
-            android:name="workoutPlan"
+            android:name="arg_workout_plan"
             app:argType="com.erendogan6.planmyworkout.domain.model.WorkoutPlan" />
         <action
             android:id="@+id/action_workoutPlanDetailFragment_to_homeFragment"

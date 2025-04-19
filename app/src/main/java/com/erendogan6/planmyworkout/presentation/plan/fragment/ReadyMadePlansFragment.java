@@ -92,7 +92,7 @@ public class ReadyMadePlansFragment extends Fragment implements WorkoutPlanAdapt
         // Navigate to WorkoutPlanDetailFragment with the selected plan using Navigation Component
         NavController navController = Navigation.findNavController(requireView());
         Bundle args = new Bundle();
-        args.putSerializable("workoutPlan", plan);
+        args.putSerializable(WorkoutPlanDetailFragment.ARG_WORKOUT_PLAN, plan);
         navController.navigate(R.id.action_readyMadePlansFragment_to_workoutPlanDetailFragment, args);
     }
 
