@@ -17,6 +17,7 @@ import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentLoginBinding;
 import com.erendogan6.planmyworkout.presentation.auth.AuthActivity;
 import com.erendogan6.planmyworkout.presentation.auth.viewmodel.LoginViewModel;
+import com.erendogan6.planmyworkout.presentation.home.HomeActivity;
 import com.erendogan6.planmyworkout.presentation.onboarding.OnboardingActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -40,28 +41,28 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-        
+
         // Set up click listeners
         setupClickListeners();
-        
+
         // Observe login result
         observeLoginResult();
     }
-    
+
     private void setupClickListeners() {
         // Login button click
         binding.btnLogin.setOnClickListener(v -> attemptLogin());
-        
+
         // Forgot password click
         binding.tvForgotPassword.setOnClickListener(v -> navigateToForgotPassword());
-        
+
         // Sign up click
         binding.tvSignUp.setOnClickListener(v -> navigateToSignUp());
     }
-    
+
     private void observeLoginResult() {
         viewModel.getLoginResult().observe(getViewLifecycleOwner(), result -> {
             if (result != null) {
@@ -74,13 +75,13 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-        
+
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             binding.btnLogin.setEnabled(!isLoading);
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         });
     }
-    
+
     private void attemptLogin() {
         // Get values
         String email = binding.etEmail.getText().toString().trim();
@@ -122,27 +123,38 @@ public class LoginFragment extends Fragment {
             viewModel.login(email, password);
         }
     }
-    
+
     private void navigateToForgotPassword() {
         if (getActivity() instanceof AuthActivity) {
             ForgotPasswordFragment fragment = new ForgotPasswordFragment();
             ((AuthActivity) getActivity()).navigateToAuthFragment(fragment, true);
         }
     }
-    
+
     private void navigateToSignUp() {
         if (getActivity() instanceof AuthActivity) {
             RegisterFragment fragment = new RegisterFragment();
             ((AuthActivity) getActivity()).navigateToAuthFragment(fragment, true);
         }
     }
-    
+
     private void navigateToOnboarding() {
+        // For new users, navigate to onboarding
         Intent intent = new Intent(requireContext(), OnboardingActivity.class);
         startActivity(intent);
         requireActivity().finish();
+
+        // For testing purposes, we can also navigate directly to the home screen
+        // navigateToHome();
     }
-    
+
+    private void navigateToHome() {
+        // For returning users, navigate directly to home
+        Intent intent = new Intent(requireContext(), HomeActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

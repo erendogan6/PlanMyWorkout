@@ -27,6 +27,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".presentation.home.HomeActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".presentation.common.BaseActivity"
             android:exported="false" />
     </application>
