@@ -1,5 +1,6 @@
 package com.erendogan6.planmyworkout.presentation.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,10 +12,17 @@ import androidx.lifecycle.ViewModelProvider;
 import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.ActivityLoginBinding;
 import com.erendogan6.planmyworkout.databinding.DialogForgotPasswordBinding;
+import com.erendogan6.planmyworkout.domain.model.OnboardingChoice;
 import com.erendogan6.planmyworkout.domain.model.Result;
+import com.erendogan6.planmyworkout.domain.usecase.onboarding.GetOnboardingChoiceUseCase;
 import com.erendogan6.planmyworkout.presentation.onboarding.OnboardingActivity;
+import com.erendogan6.planmyworkout.presentation.plan.AiPlanGenerationActivity;
+import com.erendogan6.planmyworkout.presentation.plan.CreatePlanActivity;
+import com.erendogan6.planmyworkout.presentation.plan.ReadyMadePlansActivity;
 import com.erendogan6.planmyworkout.presentation.register.RegisterActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -27,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel viewModel;
     private ActivityLoginBinding binding;
+
+    @Inject
+    GetOnboardingChoiceUseCase getOnboardingChoiceUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,9 +174,38 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToOnboarding() {
-        // Navigate to OnboardingActivity
-        startActivity(new android.content.Intent(this, OnboardingActivity.class));
-        finish();
+        // Check if the user has already completed onboarding
+        getOnboardingChoiceUseCase.execute().observe(this, result -> {
+            if (result != null && result.isSuccess() && result.getData() != null) {
+                // User has already completed onboarding, navigate to the appropriate screen
+                navigateBasedOnChoice(result.getData());
+            } else {
+                // User has not completed onboarding, navigate to the onboarding screen
+                startActivity(new Intent(this, OnboardingActivity.class));
+                finish();
+            }
+        });
+    }
+
+    private void navigateBasedOnChoice(OnboardingChoice choice) {
+        Intent intent = null;
+
+        switch (choice) {
+            case READY_MADE:
+                intent = new Intent(this, ReadyMadePlansActivity.class);
+                break;
+            case MANUAL:
+                intent = new Intent(this, CreatePlanActivity.class);
+                break;
+            case AI:
+                intent = new Intent(this, AiPlanGenerationActivity.class);
+                break;
+        }
+
+        if (intent != null) {
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void navigateToSignUp() {
