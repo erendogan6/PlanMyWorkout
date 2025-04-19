@@ -40,4 +40,6 @@
     <!-- Success Messages -->
     <string name="success_reset_password">Password reset email sent successfully</string>
     <string name="success_registration">Registration successful</string>
+    <string name="reset_password_email_sent">Password reset email sent successfully</string>
+    <string name="error_reset_password_failed">Failed to send password reset email</string>
 </resources>
