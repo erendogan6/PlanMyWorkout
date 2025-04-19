@@ -1,5 +1,6 @@
 package com.erendogan6.planmyworkout.presentation.plan.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,8 +110,11 @@ public class WorkoutPlanDetailFragment extends Fragment {
             if (success != null && success) {
                 // Plan saved successfully, navigate to home screen
                 Toast.makeText(requireContext(), "Plan saved successfully!", Toast.LENGTH_SHORT).show();
-                // In a real app, this would navigate to the home screen
-                requireActivity().onBackPressed();
+
+                // Navigate to the home screen
+                Intent intent = new Intent(requireActivity(), com.erendogan6.planmyworkout.presentation.home.HomeActivity.class);
+                startActivity(intent);
+                requireActivity().finish(); // Close the current activity
             }
         });
     }

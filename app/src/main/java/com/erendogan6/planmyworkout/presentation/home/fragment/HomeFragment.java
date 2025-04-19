@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,6 +116,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void navigateToWorkoutPlanDetail(WorkoutPlan workoutPlan) {
+        // For now, just show a toast message since this feature is not ready yet
+        Toast.makeText(requireContext(), "Viewing current workout details coming soon!", Toast.LENGTH_SHORT).show();
+
+        // In the future, this would navigate to a workout detail or tracking screen
+        // The code below is commented out until that screen is ready
+
+        /*
         // Create bundle with workout plan
         Bundle args = new Bundle();
         args.putSerializable(WorkoutPlanDetailFragment.ARG_WORKOUT_PLAN, workoutPlan);
@@ -128,6 +136,7 @@ public class HomeFragment extends Fragment {
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+        */
     }
 
     private void navigateToReadyMadePlans() {
