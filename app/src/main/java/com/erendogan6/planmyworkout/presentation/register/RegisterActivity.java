@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.ActivityRegisterBinding;
-import com.erendogan6.planmyworkout.presentation.login.LoginActivity;
 import com.erendogan6.planmyworkout.presentation.onboarding.OnboardingActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -67,11 +66,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void attemptRegistration() {
-        // Reset errors
-        binding.tilEmail.setError(null);
-        binding.tilPassword.setError(null);
-        binding.tilConfirmPassword.setError(null);
-
         // Get values
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
@@ -83,33 +77,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Check for a valid confirm password
         if (TextUtils.isEmpty(confirmPassword)) {
-            binding.tilConfirmPassword.setError(getString(R.string.error_invalid_password));
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
             focusView = binding.etConfirmPassword;
             cancel = true;
         } else if (!viewModel.doPasswordsMatch(password, confirmPassword)) {
-            binding.tilConfirmPassword.setError(getString(R.string.error_passwords_dont_match));
+            Toast.makeText(this, R.string.error_passwords_dont_match, Toast.LENGTH_SHORT).show();
             focusView = binding.etConfirmPassword;
             cancel = true;
         }
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
             focusView = binding.etPassword;
             cancel = true;
         } else if (!viewModel.isValidPassword(password)) {
-            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
             focusView = binding.etPassword;
             cancel = true;
         }
 
         // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
-            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            Toast.makeText(this, R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             focusView = binding.etEmail;
             cancel = true;
         } else if (!viewModel.isValidEmail(email)) {
-            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            Toast.makeText(this, R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             focusView = binding.etEmail;
             cancel = true;
         }
