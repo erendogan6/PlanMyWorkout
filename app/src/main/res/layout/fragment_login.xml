@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@color/background_dark"
-    tools:context=".presentation.login.LoginActivity">
+    android:background="@color/background_dark">
 
     <ImageView
         android:id="@+id/ivAppLogo"
@@ -18,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="48dp"
         android:contentDescription="@string/app_name" />
-
+        
     <TextView
         android:id="@+id/tvAppTitle"
         android:layout_width="wrap_content"
@@ -124,13 +123,13 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/btnLogin"
+        app:layout_constraintEnd_toEndOf="@id/btnLogin"
+        app:layout_constraintStart_toStartOf="@id/btnLogin"
+        app:layout_constraintTop_toTopOf="@id/btnLogin" />
 
     <TextView
         android:id="@+id/tvNoAccount"

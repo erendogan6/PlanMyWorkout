@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanMyWorkout">
         <activity
-            android:name=".presentation.login.LoginActivity"
+            android:name=".presentation.auth.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,23 +27,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".presentation.register.RegisterActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".presentation.plan.ReadyMadePlansActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".presentation.plan.CreatePlanActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".presentation.plan.AiPlanGenerationActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".presentation.plan.WorkoutPlanDetailActivity"
+            android:name=".presentation.common.BaseActivity"
             android:exported="false" />
     </application>
 
