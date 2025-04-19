@@ -4,13 +4,244 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:padding="24dp"
     tools:context=".presentation.onboarding.OnboardingActivity">
 
     <TextView
+        android:id="@+id/tvOnboardingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Onboarding Screen - Coming Soon"
-        android:textSize="20sp"
+        android:text="@string/how_would_you_like_to_start"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvOnboardingSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_an_option_below"
+        android:textColor="@color/text_secondary_light"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvOnboardingTitle" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardReadyMade"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/card_ripple"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvOnboardingSubtitle"
+        app:strokeColor="@color/accent"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:clickable="false"
+            android:focusable="false">
+
+            <ImageView
+                android:id="@+id/ivReadyMade"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_ready_made"
+                android:tint="@color/accent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="@string/ready_made_plan"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/tvReadyMadeTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/choose_a_ready_made_plan"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivReadyMade"
+                app:layout_constraintTop_toTopOf="@id/ivReadyMade"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/ready_made_description"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivReadyMade"
+                app:layout_constraintTop_toBottomOf="@id/tvReadyMadeTitle"
+                android:clickable="false"
+                android:focusable="false" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardManual"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/card_ripple"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardReadyMade"
+        app:strokeColor="@color/accent"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:clickable="false"
+            android:focusable="false">
+
+            <ImageView
+                android:id="@+id/ivManual"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_manual"
+                android:tint="@color/accent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="@string/create_my_own_plan"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/tvManualTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/create_my_own_plan"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivManual"
+                app:layout_constraintTop_toTopOf="@id/ivManual"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/manual_description"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivManual"
+                app:layout_constraintTop_toBottomOf="@id/tvManualTitle"
+                android:clickable="false"
+                android:focusable="false" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardAi"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/card_ripple"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardManual"
+        app:strokeColor="@color/accent"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:clickable="false"
+            android:focusable="false">
+
+            <ImageView
+                android:id="@+id/ivAi"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_ai"
+                android:tint="@color/accent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="@string/let_ai_generate_a_plan"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/tvAiTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/let_ai_generate_a_plan"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivAi"
+                app:layout_constraintTop_toTopOf="@id/ivAi"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/ai_description"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivAi"
+                app:layout_constraintTop_toBottomOf="@id/tvAiTitle"
+                android:clickable="false"
+                android:focusable="false" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

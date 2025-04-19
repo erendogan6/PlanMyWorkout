@@ -3,6 +3,7 @@ package com.erendogan6.planmyworkout.di;
 import android.content.Context;
 
 import com.erendogan6.planmyworkout.data.repository.AuthRepositoryImpl;
+import com.erendogan6.planmyworkout.data.repository.FirestoreManager;
 import com.erendogan6.planmyworkout.domain.repository.AuthRepository;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,5 +68,18 @@ public class FirebaseModule {
     @Singleton
     public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth) {
         return new AuthRepositoryImpl(firebaseAuth);
+    }
+
+    /**
+     * Provides FirestoreManager instance.
+     *
+     * @param firestore    FirebaseFirestore instance
+     * @param firebaseAuth FirebaseAuth instance
+     * @return FirestoreManager instance
+     */
+    @Provides
+    @Singleton
+    public FirestoreManager provideFirestoreManager(FirebaseFirestore firestore, FirebaseAuth firebaseAuth) {
+        return new FirestoreManager(firestore, firebaseAuth);
     }
 }
