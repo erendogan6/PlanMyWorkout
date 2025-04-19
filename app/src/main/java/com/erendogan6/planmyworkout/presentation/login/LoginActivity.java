@@ -91,10 +91,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        // Reset errors
-        binding.tilEmail.setError(null);
-        binding.tilPassword.setError(null);
-
         // Get values
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
@@ -105,22 +101,22 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
             focusView = binding.etPassword;
             cancel = true;
         } else if (!viewModel.isValidPassword(password)) {
-            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
             focusView = binding.etPassword;
             cancel = true;
         }
 
         // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
-            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            Toast.makeText(this, R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             focusView = binding.etEmail;
             cancel = true;
         } else if (!viewModel.isValidEmail(email)) {
-            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            Toast.makeText(this, R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
             focusView = binding.etEmail;
             cancel = true;
         }
