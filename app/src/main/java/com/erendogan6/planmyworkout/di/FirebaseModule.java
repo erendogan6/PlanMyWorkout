@@ -2,7 +2,7 @@ package com.erendogan6.planmyworkout.di;
 
 import android.content.Context;
 
-import com.erendogan6.planmyworkout.data.repository.FirebaseAuthRepository;
+import com.erendogan6.planmyworkout.data.repository.AuthRepositoryImpl;
 import com.erendogan6.planmyworkout.domain.repository.AuthRepository;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,7 +58,7 @@ public class FirebaseModule {
 
     /**
      * Provides AuthRepository implementation.
-     * Using real FirebaseAuthRepository since we have a Firebase project set up.
+     * Using real AuthRepositoryImpl since we have a Firebase project set up.
      *
      * @param firebaseAuth FirebaseAuth instance
      * @return AuthRepository implementation
@@ -66,6 +66,6 @@ public class FirebaseModule {
     @Provides
     @Singleton
     public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth) {
-        return new FirebaseAuthRepository(firebaseAuth);
+        return new AuthRepositoryImpl(firebaseAuth);
     }
 }

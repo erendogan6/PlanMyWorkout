@@ -18,12 +18,12 @@ import javax.inject.Singleton;
  * This class is part of the data layer and provides concrete implementation of authentication operations.
  */
 @Singleton
-public class FirebaseAuthRepository implements AuthRepository {
+public class AuthRepositoryImpl implements AuthRepository {
     
     private final FirebaseAuth firebaseAuth;
     
     @Inject
-    public FirebaseAuthRepository(FirebaseAuth firebaseAuth) {
+    public AuthRepositoryImpl(FirebaseAuth firebaseAuth) {
         this.firebaseAuth = firebaseAuth;
     }
     
