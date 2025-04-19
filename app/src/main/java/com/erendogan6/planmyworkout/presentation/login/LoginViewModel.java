@@ -60,20 +60,36 @@ public class LoginViewModel extends ViewModel {
      *
      * @param email    User's email
      * @param password User's password
-     * @return LiveData of login result
      */
-    public LiveData<Result<Boolean>> login(String email, String password) {
-        return loginUserUseCase.execute(email, password);
+    public void login(String email, String password) {
+        // Set loading state
+        _loginResult.setValue(Result.loading(false));
+
+        // Execute login use case and observe the result
+        LiveData<Result<Boolean>> resultLiveData = loginUserUseCase.execute(email, password);
+        resultLiveData.observeForever(result -> {
+            if (result != null) {
+                _loginResult.setValue(result);
+            }
+        });
     }
 
     /**
      * Reset password for the given email.
      *
      * @param email User's email
-     * @return LiveData of password reset result
      */
-    public LiveData<Result<Boolean>> resetPassword(String email) {
-        return resetPasswordUseCase.execute(email);
+    public void resetPassword(String email) {
+        // Set loading state
+        _resetPasswordResult.setValue(Result.loading(false));
+
+        // Execute reset password use case and observe the result
+        LiveData<Result<Boolean>> resultLiveData = resetPasswordUseCase.execute(email);
+        resultLiveData.observeForever(result -> {
+            if (result != null) {
+                _resetPasswordResult.setValue(result);
+            }
+        });
     }
 
     /**

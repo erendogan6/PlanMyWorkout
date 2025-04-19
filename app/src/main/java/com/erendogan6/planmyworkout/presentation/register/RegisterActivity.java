@@ -123,6 +123,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             // Attempt registration
             viewModel.register(email, password);
+
+            // The result will be handled in the observeViewModel() method
         }
     }
 

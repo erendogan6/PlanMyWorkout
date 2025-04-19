@@ -17,11 +17,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class RegisterViewModel extends ViewModel {
-    
+
     private final AuthRepository authRepository;
-    
+
     private final MutableLiveData<Result<Boolean>> _registerResult = new MutableLiveData<>();
-    
+
     /**
      * Constructor for RegisterViewModel.
      *
@@ -31,7 +31,7 @@ public class RegisterViewModel extends ViewModel {
     public RegisterViewModel(AuthRepository authRepository) {
         this.authRepository = authRepository;
     }
-    
+
     /**
      * Get the registration result as a LiveData.
      *
@@ -40,18 +40,26 @@ public class RegisterViewModel extends ViewModel {
     public LiveData<Result<Boolean>> getRegisterResult() {
         return _registerResult;
     }
-    
+
     /**
      * Register a new user with email and password.
      *
      * @param email    User's email
      * @param password User's password
-     * @return LiveData of registration result
      */
-    public LiveData<Result<Boolean>> register(String email, String password) {
-        return authRepository.register(email, password);
+    public void register(String email, String password) {
+        // Set loading state
+        _registerResult.setValue(Result.loading(false));
+
+        // Execute register use case and observe the result
+        LiveData<Result<Boolean>> resultLiveData = authRepository.register(email, password);
+        resultLiveData.observeForever(result -> {
+            if (result != null) {
+                _registerResult.setValue(result);
+            }
+        });
     }
-    
+
     /**
      * Validate email format.
      *
@@ -62,11 +70,11 @@ public class RegisterViewModel extends ViewModel {
         if (email == null || email.isEmpty()) {
             return false;
         }
-        
+
         // Simple email validation
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-    
+
     /**
      * Validate password format.
      *
@@ -77,7 +85,7 @@ public class RegisterViewModel extends ViewModel {
         // Password should be at least 6 characters
         return password != null && password.length() >= 6;
     }
-    
+
     /**
      * Check if passwords match.
      *
