@@ -1,7 +1,6 @@
 package com.erendogan6.planmyworkout.presentation.onboarding.fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentOnboardingBinding;
 import com.erendogan6.planmyworkout.domain.model.OnboardingChoice;
-import com.erendogan6.planmyworkout.presentation.home.HomeActivity;
 import com.erendogan6.planmyworkout.presentation.onboarding.viewmodel.OnboardingViewModel;
-import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -84,20 +84,18 @@ public class OnboardingFragment extends Fragment {
         // Save the choice to Firestore (in a real app)
         // For now, just navigate based on the choice
 
-        if (getActivity() instanceof BaseActivity) {
-            BaseActivity baseActivity = (BaseActivity) getActivity();
+        NavController navController = Navigation.findNavController(requireView());
 
-            switch (choice) {
-                case READY_MADE:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.ReadyMadePlansFragment(), false);
-                    break;
-                case MANUAL:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.CreatePlanFragment(), false);
-                    break;
-                case AI:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.AiPlanGenerationFragment(), false);
-                    break;
-            }
+        switch (choice) {
+            case READY_MADE:
+                navController.navigate(R.id.action_onboardingFragment_to_readyMadePlansFragment);
+                break;
+            case MANUAL:
+                navController.navigate(R.id.action_onboardingFragment_to_createPlanFragment);
+                break;
+            case AI:
+                navController.navigate(R.id.action_onboardingFragment_to_aiPlanGenerationFragment);
+                break;
         }
     }
 

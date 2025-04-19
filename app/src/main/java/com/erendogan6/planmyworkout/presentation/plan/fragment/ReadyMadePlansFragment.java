@@ -9,11 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentReadyMadePlansBinding;
 import com.erendogan6.planmyworkout.domain.model.WorkoutPlan;
-import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
 import com.erendogan6.planmyworkout.presentation.plan.adapter.WorkoutPlanAdapter;
 import com.erendogan6.planmyworkout.presentation.plan.viewmodel.ReadyMadePlansViewModel;
 
@@ -87,16 +89,11 @@ public class ReadyMadePlansFragment extends Fragment implements WorkoutPlanAdapt
 
     @Override
     public void onPlanSelected(WorkoutPlan plan) {
-        // Navigate to WorkoutPlanDetailFragment with the selected plan
-        WorkoutPlanDetailFragment detailFragment = new WorkoutPlanDetailFragment();
+        // Navigate to WorkoutPlanDetailFragment with the selected plan using Navigation Component
+        NavController navController = Navigation.findNavController(requireView());
         Bundle args = new Bundle();
-        args.putSerializable(WorkoutPlanDetailFragment.ARG_WORKOUT_PLAN, plan);
-        detailFragment.setArguments(args);
-
-        // Use the BaseActivity to handle fragment transactions
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).replaceFragment(detailFragment, true);
-        }
+        args.putSerializable("workoutPlan", plan);
+        navController.navigate(R.id.action_readyMadePlansFragment_to_workoutPlanDetailFragment, args);
     }
 
     @Override

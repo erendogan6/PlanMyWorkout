@@ -2,8 +2,11 @@ package com.erendogan6.planmyworkout.presentation.home;
 
 import android.os.Bundle;
 
-import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
-import com.erendogan6.planmyworkout.presentation.home.fragment.HomeFragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.erendogan6.planmyworkout.R;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -12,15 +15,24 @@ import dagger.hilt.android.AndroidEntryPoint;
  * This activity uses a fragment-based approach for better modularity.
  */
 @AndroidEntryPoint
-public class HomeActivity extends BaseActivity {
-    
+public class HomeActivity extends AppCompatActivity {
+
+    private NavController navController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Add the HomeFragment if this is the first creation
-        if (savedInstanceState == null) {
-            addFragment(new HomeFragment(), false);
+        setContentView(R.layout.activity_base);
+
+        // Set up Navigation Controller
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
         }
+    }
+
+    public NavController getNavController() {
+        return navController;
     }
 }

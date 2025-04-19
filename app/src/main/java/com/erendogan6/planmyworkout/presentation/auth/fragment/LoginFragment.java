@@ -12,10 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentLoginBinding;
-import com.erendogan6.planmyworkout.presentation.auth.AuthActivity;
 import com.erendogan6.planmyworkout.presentation.auth.viewmodel.LoginViewModel;
 import com.erendogan6.planmyworkout.presentation.home.HomeActivity;
 import com.erendogan6.planmyworkout.presentation.onboarding.OnboardingActivity;
@@ -125,17 +126,13 @@ public class LoginFragment extends Fragment {
     }
 
     private void navigateToForgotPassword() {
-        if (getActivity() instanceof AuthActivity) {
-            ForgotPasswordFragment fragment = new ForgotPasswordFragment();
-            ((AuthActivity) getActivity()).navigateToAuthFragment(fragment, true);
-        }
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_loginFragment_to_forgotPasswordFragment);
     }
 
     private void navigateToSignUp() {
-        if (getActivity() instanceof AuthActivity) {
-            RegisterFragment fragment = new RegisterFragment();
-            ((AuthActivity) getActivity()).navigateToAuthFragment(fragment, true);
-        }
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_loginFragment_to_registerFragment);
     }
 
     private void navigateToOnboarding() {

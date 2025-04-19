@@ -2,13 +2,11 @@ package com.erendogan6.planmyworkout.presentation.auth;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.erendogan6.planmyworkout.R;
-import com.erendogan6.planmyworkout.databinding.ActivityAuthBinding;
-import com.erendogan6.planmyworkout.presentation.auth.fragment.LoginFragment;
-import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -17,30 +15,21 @@ import dagger.hilt.android.AndroidEntryPoint;
  * This includes login, registration, and forgot password.
  */
 @AndroidEntryPoint
-public class AuthActivity extends BaseActivity {
+public class AuthActivity extends AppCompatActivity {
 
-    private ActivityAuthBinding binding;
+    private NavController navController;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Initialize ViewBinding
-        binding = ActivityAuthBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        
-        // Add the LoginFragment as the default fragment if this is the first creation
-        if (savedInstanceState == null) {
-            addFragment(new LoginFragment(), false);
+        setContentView(R.layout.activity_auth);
+
+        // Set up Navigation Controller
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
         }
     }
-    
-    /**
-     * Navigate to a specific authentication fragment.
-     * @param fragment The fragment to navigate to
-     * @param addToBackStack Whether to add the transaction to the back stack
-     */
-    public void navigateToAuthFragment(Fragment fragment, boolean addToBackStack) {
-        replaceFragment(fragment, addToBackStack);
-    }
+
 }

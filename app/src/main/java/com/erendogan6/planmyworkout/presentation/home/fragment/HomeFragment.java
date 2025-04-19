@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentHomeBinding;
@@ -140,24 +142,21 @@ public class HomeFragment extends Fragment {
     }
 
     private void navigateToReadyMadePlans() {
-        // Navigate to ready-made plans screen
-        ReadyMadePlansFragment fragment = new ReadyMadePlansFragment();
-
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit();
+        // Navigate to ready-made plans screen using Navigation Component
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_homeFragment_to_readyMadePlansFragment);
     }
 
     private void navigateToBuildOwnPlan() {
-        // TODO: Navigate to build own plan screen
-        // This would be implemented when the build own plan feature is ready
+        // Navigate to build own plan screen using Navigation Component
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_homeFragment_to_createPlanFragment);
     }
 
     private void navigateToGenerateAI() {
-        // TODO: Navigate to AI generation screen
-        // This would be implemented when the AI generation feature is ready
+        // Navigate to AI generation screen using Navigation Component
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_homeFragment_to_aiPlanGenerationFragment);
     }
 
     @Override
