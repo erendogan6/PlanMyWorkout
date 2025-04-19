@@ -41,6 +41,10 @@
         <activity
             android:name=".presentation.plan.AiPlanGenerationActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".presentation.plan.WorkoutPlanDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
