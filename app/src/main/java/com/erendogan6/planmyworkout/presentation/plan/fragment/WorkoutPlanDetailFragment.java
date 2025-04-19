@@ -55,14 +55,13 @@ public class WorkoutPlanDetailFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey(ARG_WORKOUT_PLAN)) {
             WorkoutPlan workoutPlan = (WorkoutPlan) getArguments().getSerializable(ARG_WORKOUT_PLAN);
             viewModel.setWorkoutPlan(workoutPlan);
-        } else {
-            // No plan provided, show error and go back
-            Toast.makeText(requireContext(), "Error: No workout plan provided", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
         }
 
         // Set up back button
-        binding.toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.popBackStack();
+        });
 
         // Set up start plan button
         binding.btnStartPlan.setOnClickListener(v -> viewModel.savePlan());
