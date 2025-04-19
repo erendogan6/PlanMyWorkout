@@ -70,6 +70,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Navigation Components
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.navigation.dynamic.features)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

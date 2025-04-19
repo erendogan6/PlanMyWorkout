@@ -2,11 +2,11 @@ package com.erendogan6.planmyworkout.presentation.onboarding;
 
 import android.os.Bundle;
 
-import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
-import com.erendogan6.planmyworkout.presentation.onboarding.fragment.OnboardingFragment;
-import com.erendogan6.planmyworkout.presentation.plan.fragment.AiPlanGenerationFragment;
-import com.erendogan6.planmyworkout.presentation.plan.fragment.CreatePlanFragment;
-import com.erendogan6.planmyworkout.presentation.plan.fragment.ReadyMadePlansFragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.erendogan6.planmyworkout.R;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -15,15 +15,24 @@ import dagger.hilt.android.AndroidEntryPoint;
  * This activity now uses a fragment-based approach for better modularity.
  */
 @AndroidEntryPoint
-public class OnboardingActivity extends BaseActivity {
+public class OnboardingActivity extends AppCompatActivity {
+
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_onboarding_nav);
 
-        // Add the OnboardingFragment if this is the first creation
-        if (savedInstanceState == null) {
-            addFragment(new OnboardingFragment(), false);
+        // Set up Navigation Controller
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
         }
+    }
+
+    public NavController getNavController() {
+        return navController;
     }
 }
