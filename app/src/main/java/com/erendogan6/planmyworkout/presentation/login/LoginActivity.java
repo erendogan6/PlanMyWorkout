@@ -6,17 +6,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.erendogan6.planmyworkout.R;
+import com.erendogan6.planmyworkout.databinding.ActivityLoginBinding;
+import com.erendogan6.planmyworkout.databinding.DialogForgotPasswordBinding;
 import com.erendogan6.planmyworkout.domain.model.Result;
 import com.erendogan6.planmyworkout.presentation.onboarding.OnboardingActivity;
-import com.google.android.material.button.MaterialButton;
+import com.erendogan6.planmyworkout.presentation.register.RegisterActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.FirebaseApp;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -28,24 +26,18 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel viewModel;
-
-    private TextInputLayout tilEmail;
-    private TextInputLayout tilPassword;
-    private TextInputEditText etEmail;
-    private TextInputEditText etPassword;
-    private MaterialButton btnLogin;
-    private View progressBar;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+        // Initialize ViewBinding
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-
-        // Initialize views
-        initViews();
 
         // Set up click listeners
         setupClickListeners();
@@ -81,31 +73,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void initViews() {
-        tilEmail = findViewById(R.id.tilEmail);
-        tilPassword = findViewById(R.id.tilPassword);
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        progressBar = findViewById(R.id.progressBar);
-
-        // Set up click listeners for other views
-        findViewById(R.id.tvForgotPassword).setOnClickListener(v -> showForgotPasswordDialog());
-        findViewById(R.id.tvSignUp).setOnClickListener(v -> navigateToSignUp());
-    }
-
     private void setupClickListeners() {
-        btnLogin.setOnClickListener(v -> attemptLogin());
+        binding.btnLogin.setOnClickListener(v -> attemptLogin());
+        binding.tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
+        binding.tvSignUp.setOnClickListener(v -> navigateToSignUp());
     }
 
     private void attemptLogin() {
         // Reset errors
-        tilEmail.setError(null);
-        tilPassword.setError(null);
+        binding.tilEmail.setError(null);
+        binding.tilPassword.setError(null);
 
         // Get values
-        String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString();
+        String email = binding.etEmail.getText().toString().trim();
+        String password = binding.etPassword.getText().toString();
 
         // Validate input
         boolean cancel = false;
@@ -113,23 +94,23 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            tilPassword.setError(getString(R.string.error_invalid_password));
-            focusView = etPassword;
+            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            focusView = binding.etPassword;
             cancel = true;
         } else if (!viewModel.isValidPassword(password)) {
-            tilPassword.setError(getString(R.string.error_invalid_password));
-            focusView = etPassword;
+            binding.tilPassword.setError(getString(R.string.error_invalid_password));
+            focusView = binding.etPassword;
             cancel = true;
         }
 
         // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
-            tilEmail.setError(getString(R.string.error_invalid_email));
-            focusView = etEmail;
+            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            focusView = binding.etEmail;
             cancel = true;
         } else if (!viewModel.isValidEmail(email)) {
-            tilEmail.setError(getString(R.string.error_invalid_email));
-            focusView = etEmail;
+            binding.tilEmail.setError(getString(R.string.error_invalid_email));
+            focusView = binding.etEmail;
             cancel = true;
         }
 
@@ -146,14 +127,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showForgotPasswordDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
-        TextInputEditText etDialogEmail = dialogView.findViewById(R.id.etDialogEmail);
+        DialogForgotPasswordBinding dialogBinding = DialogForgotPasswordBinding.inflate(getLayoutInflater());
 
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.forgot_password)
-            .setView(dialogView)
+            .setView(dialogBinding.getRoot())
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                String email = etDialogEmail.getText().toString().trim();
+                String email = dialogBinding.etDialogEmail.getText().toString().trim();
                 if (viewModel.isValidEmail(email)) {
                     resetPassword(email);
                 } else {
@@ -170,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showProgress(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        btnLogin.setEnabled(!show);
+        binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        binding.btnLogin.setEnabled(!show);
     }
 
     private void showLoginError(String message) {
@@ -186,7 +166,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToSignUp() {
         // Navigate to RegisterActivity
-        // This will be implemented in the next phase
-        Toast.makeText(this, "Sign Up functionality will be implemented in the next phase", Toast.LENGTH_SHORT).show();
+        startActivity(new android.content.Intent(this, RegisterActivity.class));
     }
 }

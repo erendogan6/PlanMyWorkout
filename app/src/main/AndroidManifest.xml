@@ -25,6 +25,10 @@
         <activity
             android:name=".presentation.onboarding.OnboardingActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".presentation.register.RegisterActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
