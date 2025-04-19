@@ -10,12 +10,21 @@
     <string name="no_account">Don\'t have an account?</string>
     <string name="sign_up">Sign Up</string>
     
+    <!-- Register Screen -->
+    <string name="register_subtitle">Create a new account</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="have_account">Already have an account?</string>
+    
     <!-- Error Messages -->
     <string name="error_invalid_email">Please enter a valid email address</string>
     <string name="error_invalid_password">Password must be at least 6 characters</string>
     <string name="error_login_failed">Login failed. Please check your credentials.</string>
     <string name="error_reset_password">Failed to send password reset email</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+    <string name="error_registration_failed">Registration failed</string>
     
     <!-- Success Messages -->
     <string name="success_reset_password">Password reset email sent successfully</string>
+    <string name="success_registration">Registration successful</string>
 </resources>
