@@ -1,6 +1,7 @@
 package com.erendogan6.planmyworkout.presentation.onboarding.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.erendogan6.planmyworkout.databinding.FragmentOnboardingBinding;
 import com.erendogan6.planmyworkout.domain.model.OnboardingChoice;
+import com.erendogan6.planmyworkout.presentation.home.HomeActivity;
 import com.erendogan6.planmyworkout.presentation.onboarding.viewmodel.OnboardingViewModel;
 import com.erendogan6.planmyworkout.presentation.common.BaseActivity;
 
@@ -79,21 +81,13 @@ public class OnboardingFragment extends Fragment {
     }
 
     private void navigateBasedOnChoice(OnboardingChoice choice) {
-        if (getActivity() instanceof BaseActivity) {
-            BaseActivity baseActivity = (BaseActivity) getActivity();
+        // Save the choice and navigate to the home screen
+        // In a real app, we would save the choice to Firestore here
 
-            switch (choice) {
-                case READY_MADE:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.ReadyMadePlansFragment(), false);
-                    break;
-                case MANUAL:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.CreatePlanFragment(), false);
-                    break;
-                case AI:
-                    baseActivity.replaceFragment(new com.erendogan6.planmyworkout.presentation.plan.fragment.AiPlanGenerationFragment(), false);
-                    break;
-            }
-        }
+        // Navigate to the home screen
+        Intent intent = new Intent(requireActivity(), HomeActivity.class);
+        startActivity(intent);
+        requireActivity().finish(); // Close the onboarding activity
     }
 
     @Override
