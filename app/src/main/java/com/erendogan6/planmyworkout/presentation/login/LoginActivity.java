@@ -123,6 +123,8 @@ public class LoginActivity extends AppCompatActivity {
 
             // Attempt login
             viewModel.login(email, password);
+
+            // The result will be handled in the observeViewModel() method
         }
     }
 
@@ -147,6 +149,8 @@ public class LoginActivity extends AppCompatActivity {
     private void resetPassword(String email) {
         showProgress(true);
         viewModel.resetPassword(email);
+
+        // The result will be handled in the observeViewModel() method
     }
 
     private void showProgress(boolean show) {
