@@ -14,7 +14,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.erendogan6.planmyworkout.feature.workout.R;
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseListAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseListBinding;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;

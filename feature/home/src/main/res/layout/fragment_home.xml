@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_dark"
@@ -37,7 +36,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardMotivational"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -165,7 +163,6 @@
             app:layout_constraintTop_toBottomOf="@id/layoutCurrentPlan">
 
             <TextView
-                android:id="@+id/tvCreateTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Create a Workout Plan"
@@ -221,7 +218,6 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tvReadyMadePlan"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Select a Ready-Made Plan"
@@ -270,7 +266,6 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tvBuildOwnPlan"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Build Your Own Plan"
@@ -319,7 +314,6 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tvGenerateAI"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Generate with AI"

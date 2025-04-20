@@ -5,21 +5,21 @@
     app:startDestination="@id/auth_navigation">
 
     <!-- Auth feature navigation -->
-    <include app:graph="@navigation/auth_navigation" />
+    <include android:id="@+id/auth_navigation" app:graph="@navigation/auth_navigation" />
 
     <!-- Onboarding feature navigation -->
-    <include app:graph="@navigation/onboarding_navigation" />
+    <include android:id="@+id/onboarding_navigation" app:graph="@navigation/onboarding_navigation" />
 
     <!-- Home feature navigation -->
-    <include app:graph="@navigation/home_navigation" />
+    <include android:id="@+id/home_navigation" app:graph="@navigation/home_navigation" />
 
     <!-- Workout feature navigation -->
-    <include app:graph="@navigation/workout_navigation" />
+    <include android:id="@+id/workout_navigation" app:graph="@navigation/workout_navigation" />
 
     <!-- Progress feature navigation -->
-    <include app:graph="@navigation/progress_navigation" />
+    <include android:id="@+id/progress_navigation" app:graph="@navigation/progress_navigation" />
 
     <!-- Profile feature navigation -->
-    <include app:graph="@navigation/profile_navigation" />
+    <include android:id="@+id/profile_navigation" app:graph="@navigation/profile_navigation" />
 
 </navigation>

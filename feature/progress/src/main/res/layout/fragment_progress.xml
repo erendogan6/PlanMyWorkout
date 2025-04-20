@@ -70,7 +70,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/view_weight_chart" />
 
                 <TextView
-                    android:id="@+id/tv_goal_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Goal: 70 kg"
@@ -78,7 +77,6 @@
                     app:layout_constraintTop_toTopOf="@+id/tv_current_weight" />
 
                 <Button
-                    android:id="@+id/btn_update_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -91,7 +89,6 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_workout_frequency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -138,7 +135,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/view_frequency_chart" />
 
                 <TextView
-                    android:id="@+id/tv_last_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Last Week: 4 workouts"
@@ -146,7 +142,6 @@
                     app:layout_constraintTop_toTopOf="@+id/tv_this_week" />
 
                 <Button
-                    android:id="@+id/btn_view_history"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
