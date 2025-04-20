@@ -8,5 +8,4 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="sign_up">Sign Up</string>
-    <string name="login_failed">Login failed: %1$s</string>
 </resources>

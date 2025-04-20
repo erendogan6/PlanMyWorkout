@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.erendogan6.planmyworkout.core.model.Result;
 import com.erendogan6.planmyworkout.feature.onboarding.R;
 import com.erendogan6.planmyworkout.feature.onboarding.databinding.FragmentOnboardingSelectionBinding;
 import com.erendogan6.planmyworkout.feature.onboarding.model.OnboardingChoice;

@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.erendogan6.planmyworkout.feature.onboarding.R;
 import com.erendogan6.planmyworkout.feature.onboarding.databinding.FragmentAiGeneratePlanBinding;
 
 import dagger.hilt.android.AndroidEntryPoint;

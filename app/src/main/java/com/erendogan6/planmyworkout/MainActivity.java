@@ -5,14 +5,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-
-import com.erendogan6.planmyworkout.domain.usecase.auth.IsUserLoggedInUseCase;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -24,9 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
-    @Inject
-    IsUserLoggedInUseCase isUserLoggedInUseCase;
 
     private NavController navController;
 
@@ -51,14 +41,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
-    }
-
-    // For testing purposes, you can call this method to sign out
-    private void signOut() {
-        // Get the AuthRepository and sign out
-        com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
-
-        // Restart the activity to show the login screen
-        recreate();
     }
 }

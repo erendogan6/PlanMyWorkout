@@ -162,4 +162,11 @@ public class ExerciseWithProgress implements Serializable {
     public void setLastReps(Integer lastReps) {
         this.lastReps = lastReps;
     }
+
+    /**
+     * Check if this exercise has previous attempt data.
+     */
+    public boolean hasLastTry() {
+        return lastWeight != null && lastReps != null;
+    }
 }
