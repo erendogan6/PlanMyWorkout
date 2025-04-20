@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding_navigation"
+    app:startDestination="@id/onboardingSelectionFragment">
+
+    <fragment
+        android:id="@+id/onboardingSelectionFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.OnboardingSelectionFragment"
+        android:label="Onboarding Selection"
+        tools:layout="@layout/fragment_onboarding_selection">
+        <action
+            android:id="@+id/action_onboardingSelectionFragment_to_readyMadePlanFragment"
+            app:destination="@id/readyMadePlanFragment" />
+        <action
+            android:id="@+id/action_onboardingSelectionFragment_to_createOwnPlanFragment"
+            app:destination="@id/createOwnPlanFragment" />
+        <action
+            android:id="@+id/action_onboardingSelectionFragment_to_aiGeneratePlanFragment"
+            app:destination="@id/aiGeneratePlanFragment" />
+        <action
+            android:id="@+id/action_onboardingSelectionFragment_to_home_navigation"
+            app:destination="@id/home_navigation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/readyMadePlanFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.ReadyMadePlanFragment"
+        android:label="Ready-Made Plans"
+        tools:layout="@layout/fragment_ready_made_plan_list">
+        <action
+            android:id="@+id/action_readyMadePlanFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createOwnPlanFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.CreateOwnPlanFragment"
+        android:label="Create Own Plan"
+        tools:layout="@layout/fragment_create_own_plan">
+        <action
+            android:id="@+id/action_createOwnPlanFragment_to_home_navigation"
+            app:destination="@id/home_navigation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aiGeneratePlanFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.AiGeneratePlanFragment"
+        android:label="AI Generate Plan"
+        tools:layout="@layout/fragment_ai_generate_plan">
+        <action
+            android:id="@+id/action_aiGeneratePlanFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/planDetailFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.PlanDetailFragment"
+        android:label="Plan Detail"
+        tools:layout="@layout/fragment_plan_detail_improved">
+        <action
+            android:id="@+id/action_planDetailFragment_to_home_navigation"
+            app:destination="@id/home_navigation" />
+        <argument
+            android:name="planId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

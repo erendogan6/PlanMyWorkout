@@ -1,19 +1,8 @@
 package com.erendogan6.planmyworkout.di;
 
-import com.erendogan6.planmyworkout.data.repository.FirestoreManager;
-import com.erendogan6.planmyworkout.domain.repository.AuthRepository;
-import com.erendogan6.planmyworkout.domain.usecase.auth.IsUserLoggedInUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.auth.LoginUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.auth.RegisterUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.auth.ResetPasswordUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.auth.SignOutUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.onboarding.GetOnboardingChoiceUseCase;
-import com.erendogan6.planmyworkout.domain.usecase.onboarding.SaveOnboardingChoiceUseCase;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
-import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 
@@ -23,88 +12,5 @@ import dagger.hilt.components.SingletonComponent;
 @Module
 @InstallIn(SingletonComponent.class)
 public class UseCaseModule {
-
-    /**
-     * Provides LoginUseCase instance.
-     *
-     * @param authRepository AuthRepository instance
-     * @return LoginUseCase instance
-     */
-    @Provides
-    @Singleton
-    public LoginUseCase provideLoginUseCase(AuthRepository authRepository) {
-        return new LoginUseCase(authRepository);
-    }
-
-    /**
-     * Provides RegisterUseCase instance.
-     *
-     * @param authRepository AuthRepository instance
-     * @return RegisterUseCase instance
-     */
-    @Provides
-    @Singleton
-    public RegisterUseCase provideRegisterUseCase(AuthRepository authRepository) {
-        return new RegisterUseCase(authRepository);
-    }
-
-    /**
-     * Provides ResetPasswordUseCase instance.
-     *
-     * @param authRepository AuthRepository instance
-     * @return ResetPasswordUseCase instance
-     */
-    @Provides
-    @Singleton
-    public ResetPasswordUseCase provideResetPasswordUseCase(AuthRepository authRepository) {
-        return new ResetPasswordUseCase(authRepository);
-    }
-
-    /**
-     * Provides IsUserLoggedInUseCase instance.
-     *
-     * @param authRepository AuthRepository instance
-     * @return IsUserLoggedInUseCase instance
-     */
-    @Provides
-    @Singleton
-    public IsUserLoggedInUseCase provideIsUserLoggedInUseCase(AuthRepository authRepository) {
-        return new IsUserLoggedInUseCase(authRepository);
-    }
-
-    /**
-     * Provides SignOutUseCase instance.
-     *
-     * @param authRepository AuthRepository instance
-     * @return SignOutUseCase instance
-     */
-    @Provides
-    @Singleton
-    public SignOutUseCase provideSignOutUseCase(AuthRepository authRepository) {
-        return new SignOutUseCase(authRepository);
-    }
-
-    /**
-     * Provides SaveOnboardingChoiceUseCase instance.
-     *
-     * @param firestoreManager FirestoreManager instance
-     * @return SaveOnboardingChoiceUseCase instance
-     */
-    @Provides
-    @Singleton
-    public SaveOnboardingChoiceUseCase provideSaveOnboardingChoiceUseCase(FirestoreManager firestoreManager) {
-        return new SaveOnboardingChoiceUseCase(firestoreManager);
-    }
-
-    /**
-     * Provides GetOnboardingChoiceUseCase instance.
-     *
-     * @param firestoreManager FirestoreManager instance
-     * @return GetOnboardingChoiceUseCase instance
-     */
-    @Provides
-    @Singleton
-    public GetOnboardingChoiceUseCase provideGetOnboardingChoiceUseCase(FirestoreManager firestoreManager) {
-        return new GetOnboardingChoiceUseCase(firestoreManager);
-    }
+    // Use cases are now provided by their respective feature modules
 }

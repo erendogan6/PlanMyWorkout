@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.erendogan6.planmyworkout.feature.home.ui.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_workout_navigation"
+            app:destination="@id/workout_navigation" />
+        <action
+            android:id="@+id/action_homeFragment_to_readyMadePlansFragment"
+            app:destination="@id/readyMadePlansFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createPlanFragment"
+            app:destination="@id/createPlanFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_aiGeneratePlanFragment"
+            app:destination="@id/aiGeneratePlanFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/readyMadePlansFragment"
+        android:name="com.erendogan6.planmyworkout.feature.home.ui.ReadyMadePlansFragment"
+        android:label="Ready-Made Plans"
+        tools:layout="@layout/fragment_ready_made_plans">
+        <action
+            android:id="@+id/action_readyMadePlansFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createPlanFragment"
+        android:name="com.erendogan6.planmyworkout.feature.home.ui.CreatePlanFragment"
+        android:label="Create Plan"
+        tools:layout="@layout/fragment_create_plan">
+        <action
+            android:id="@+id/action_createPlanFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aiGeneratePlanFragment"
+        android:name="com.erendogan6.planmyworkout.feature.home.ui.AiGeneratePlanFragment"
+        android:label="AI Generate Plan"
+        tools:layout="@layout/fragment_ai_generate_plan">
+        <action
+            android:id="@+id/action_aiGeneratePlanFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/planDetailFragment"
+        android:name="com.erendogan6.planmyworkout.feature.home.ui.PlanDetailFragment"
+        android:label="Plan Detail"
+        tools:layout="@layout/fragment_plan_detail">
+        <action
+            android:id="@+id/action_planDetailFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="planId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

@@ -20,5 +20,18 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "PlanMyWorkout"
+
+// App module
 include(":app")
- 
+
+// Core modules
+include(":core")
+include(":core-ui")
+
+// Feature modules
+include(":feature:auth")
+include(":feature:onboarding")
+include(":feature:home")
+include(":feature:workout")
+include(":feature:progress")
+include(":feature:profile")
