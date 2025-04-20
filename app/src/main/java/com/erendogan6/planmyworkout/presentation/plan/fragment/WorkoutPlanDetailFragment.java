@@ -1,5 +1,6 @@
 package com.erendogan6.planmyworkout.presentation.plan.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.erendogan6.planmyworkout.R;
 import com.erendogan6.planmyworkout.databinding.FragmentWorkoutPlanDetailBinding;
 import com.erendogan6.planmyworkout.domain.model.Exercise;
 import com.erendogan6.planmyworkout.domain.model.WorkoutPlan;
+import com.erendogan6.planmyworkout.presentation.home.HomeActivity;
 import com.erendogan6.planmyworkout.presentation.plan.adapter.ExerciseAdapter;
 import com.erendogan6.planmyworkout.presentation.plan.viewmodel.WorkoutPlanDetailViewModel;
 
@@ -113,8 +115,8 @@ public class WorkoutPlanDetailFragment extends Fragment {
                 Toast.makeText(requireContext(), "Plan saved successfully!", Toast.LENGTH_SHORT).show();
 
                 // Navigate to the home screen using Navigation Component
-                NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_workoutPlanDetailFragment_to_homeFragment);
+                Intent intent = new Intent(requireContext(), HomeActivity.class);
+                startActivity(intent);
             }
         });
     }
