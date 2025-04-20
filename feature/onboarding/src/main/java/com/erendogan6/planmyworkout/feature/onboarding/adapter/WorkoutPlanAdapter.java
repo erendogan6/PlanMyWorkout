@@ -18,7 +18,7 @@ import java.util.List;
 public class WorkoutPlanAdapter extends RecyclerView.Adapter<WorkoutPlanAdapter.WorkoutPlanViewHolder> {
 
     private List<WorkoutPlan> workoutPlans;
-    private OnPlanSelectedListener listener;
+    private final OnPlanSelectedListener listener;
 
     /**
      * Interface for handling plan selection events.
