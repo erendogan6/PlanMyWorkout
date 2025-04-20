@@ -11,10 +11,6 @@
     <string name="sign_up">Sign Up</string>
 
     <!-- Register Screen -->
-    <string name="register_subtitle">Create a new account</string>
-    <string name="register">Register</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="have_account">Already have an account?</string>
 
     <!-- Error Messages -->
 
