@@ -65,21 +65,8 @@
         android:label="Workout Plan Detail"
         tools:layout="@layout/fragment_workout_plan_detail">
         <argument
-            android:name="arg_workout_plan"
+            android:name="workoutPlan"
             app:argType="com.erendogan6.planmyworkout.domain.model.WorkoutPlan" />
-        <action
-            android:id="@+id/action_workoutPlanDetailFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popUpTo="@id/onboardingFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.erendogan6.planmyworkout.presentation.home.fragment.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home" />
 
 </navigation>
