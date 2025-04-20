@@ -2,6 +2,7 @@ package com.erendogan6.planmyworkout.feature.workout.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
@@ -19,22 +20,34 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class ExerciseDetailViewModel extends ViewModel {
 
     private final WorkoutRepository repository;
+    private final SavedStateHandle savedStateHandle;
     private final MutableLiveData<ExerciseWithProgress> exercise = new MutableLiveData<>();
+    private final MutableLiveData<ExerciseLog> latestLog = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isSaving = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
-    public ExerciseDetailViewModel(WorkoutRepository repository) {
+    public ExerciseDetailViewModel(WorkoutRepository repository, SavedStateHandle savedStateHandle) {
         this.repository = repository;
+        this.savedStateHandle = savedStateHandle;
     }
 
     public LiveData<ExerciseWithProgress> getExercise() {
         return exercise;
     }
 
+    public LiveData<ExerciseLog> getLatestLog() {
+        return latestLog;
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    public LiveData<Boolean> getIsSaving() {
+        return isSaving;
     }
 
     public LiveData<Boolean> getSaveSuccess() {
@@ -46,74 +59,84 @@ public class ExerciseDetailViewModel extends ViewModel {
     }
 
     /**
-     * Load exercise details by ID.
+     * Load the exercise details from Firestore.
      */
-    public void loadExerciseDetails(String exerciseId) {
-        isLoading.setValue(true);
+    public void loadExerciseDetails() {
+        String exerciseId = savedStateHandle.get("exerciseId");
+        String planId = savedStateHandle.get("planId");
 
-        // In a real app, this would load from repository
-        // For now, we'll just create a mock exercise
-        try {
-            // Simulate network delay
-            Thread.sleep(500);
-
-            // Create mock exercise with progress
-            ExerciseWithProgress mockExercise = createMockExercise(exerciseId);
-            exercise.postValue(mockExercise);
-            isLoading.postValue(false);
-        } catch (InterruptedException e) {
-            errorMessage.postValue("Failed to load exercise: " + e.getMessage());
-            isLoading.postValue(false);
+        if (exerciseId != null && planId != null) {
+            isLoading.setValue(true);
+            repository.getExercise(planId, exerciseId)
+                    .addOnSuccessListener(loadedExercise -> {
+                        exercise.setValue(loadedExercise);
+                        isLoading.setValue(false);
+                    })
+                    .addOnFailureListener(e -> {
+                        errorMessage.setValue("Failed to load exercise: " + e.getMessage());
+                        isLoading.setValue(false);
+                    });
         }
     }
 
     /**
-     * Save the exercise log.
+     * Load the latest exercise log from Firestore.
+     */
+    public void loadLatestLog() {
+        String exerciseId = savedStateHandle.get("exerciseId");
+        String planId = savedStateHandle.get("planId");
+
+        if (exerciseId != null && planId != null) {
+            isLoading.setValue(true);
+            repository.getLatestExerciseLog(planId, exerciseId)
+                    .addOnSuccessListener(log -> {
+                        latestLog.setValue(log);
+                        isLoading.setValue(false);
+                    })
+                    .addOnFailureListener(e -> {
+                        // It's okay if there's no log yet, just set loading to false
+                        isLoading.setValue(false);
+                    });
+        }
+    }
+
+    /**
+     * Save the exercise log to Firestore.
      */
     public void saveExerciseLog(double weight, int reps, String notes) {
-        isLoading.setValue(true);
+        String exerciseId = savedStateHandle.get("exerciseId");
+        String planId = savedStateHandle.get("planId");
 
-        // Create a new exercise log
-        ExerciseLog log = new ExerciseLog(weight, reps, notes);
-
-        // In a real app, we would save this to repository
-        // For now, we'll just simulate a successful save
-        try {
-            // Simulate network delay
-            Thread.sleep(1000);
-
-            // Simulate successful save
-            saveSuccess.postValue(true);
-            isLoading.postValue(false);
-        } catch (InterruptedException e) {
-            // Handle error
-            errorMessage.postValue("Failed to save exercise log: " + e.getMessage());
-            isLoading.postValue(false);
+        if (exerciseId == null || planId == null) {
+            errorMessage.setValue("Exercise ID or Plan ID not found");
+            return;
         }
-    }
 
-    /**
-     * Create a mock exercise with progress.
-     */
-    private ExerciseWithProgress createMockExercise(String exerciseId) {
-        // In a real app, this would come from repository
-        switch (exerciseId) {
-            case "ex1":
-                return new ExerciseWithProgress("ex1", "Barbell Squat",
-                        "A compound lower body exercise", "Legs", "",
-                        3, 10, 90, 80.0, 8);
-            case "ex2":
-                return new ExerciseWithProgress("ex2", "Bench Press",
-                        "A compound upper body exercise", "Chest", "",
-                        3, 10, 90, 70.0, 8);
-            case "ex3":
-                return new ExerciseWithProgress("ex3", "Deadlift",
-                        "A compound full body exercise", "Back", "",
-                        3, 8, 120, 100.0, 6);
-            default:
-                return new ExerciseWithProgress(exerciseId, "Exercise " + exerciseId,
-                        "Description for exercise " + exerciseId, "Unknown", "",
-                        3, 10, 60, null, null);
+        // Validate inputs
+        if (weight <= 0) {
+            errorMessage.setValue("Please enter a valid weight");
+            return;
         }
+
+        if (reps <= 0) {
+            errorMessage.setValue("Please enter a valid number of reps");
+            return;
+        }
+
+        // Show loading state
+        isSaving.setValue(true);
+
+        // Save to Firestore
+        repository.saveExerciseLog(planId, exerciseId, weight, reps, notes)
+                .addOnSuccessListener(aVoid -> {
+                    saveSuccess.setValue(true);
+                    isSaving.setValue(false);
+                    // Reload the latest log to show the updated data
+                    loadLatestLog();
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.setValue("Failed to save log: " + e.getMessage());
+                    isSaving.setValue(false);
+                });
     }
 }

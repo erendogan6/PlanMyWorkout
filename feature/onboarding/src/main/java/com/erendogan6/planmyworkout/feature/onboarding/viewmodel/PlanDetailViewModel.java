@@ -8,11 +8,9 @@ import com.erendogan6.planmyworkout.core.util.FirestoreManager;
 import com.erendogan6.planmyworkout.feature.onboarding.model.Exercise;
 import com.erendogan6.planmyworkout.feature.onboarding.model.WorkoutPlan;
 import com.erendogan6.planmyworkout.feature.onboarding.usecase.GetReadyMadePlansUseCase;
+import com.erendogan6.planmyworkout.feature.onboarding.usecase.SavePlanUseCase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -26,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class PlanDetailViewModel extends ViewModel {
 
     private final GetReadyMadePlansUseCase getReadyMadePlansUseCase;
+    private final SavePlanUseCase savePlanUseCase;
     private final FirestoreManager firestoreManager;
 
     private final MutableLiveData<WorkoutPlan> workoutPlan = new MutableLiveData<>();
@@ -35,8 +34,12 @@ public class PlanDetailViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
-    public PlanDetailViewModel(GetReadyMadePlansUseCase getReadyMadePlansUseCase, FirestoreManager firestoreManager) {
+    public PlanDetailViewModel(
+            GetReadyMadePlansUseCase getReadyMadePlansUseCase,
+            SavePlanUseCase savePlanUseCase,
+            FirestoreManager firestoreManager) {
         this.getReadyMadePlansUseCase = getReadyMadePlansUseCase;
+        this.savePlanUseCase = savePlanUseCase;
         this.firestoreManager = firestoreManager;
     }
 
@@ -81,10 +84,8 @@ public class PlanDetailViewModel extends ViewModel {
         });
     }
 
-    // No mock exercises - we only use real data from Firestore
-
     /**
-     * Save the selected workout plan to Firestore.
+     * Save the selected workout plan to Firestore using the repository.
      */
     public void savePlan() {
         isLoading.setValue(true);
@@ -93,6 +94,7 @@ public class PlanDetailViewModel extends ViewModel {
         String userId = firestoreManager.getCurrentUserId();
         if (userId == null) {
             isLoading.setValue(false);
+            errorMessage.setValue("User not logged in");
             savePlanSuccess.setValue(false);
             return;
         }
@@ -101,97 +103,45 @@ public class PlanDetailViewModel extends ViewModel {
         WorkoutPlan plan = workoutPlan.getValue();
         if (plan == null) {
             isLoading.setValue(false);
+            errorMessage.setValue("No workout plan selected");
             savePlanSuccess.setValue(false);
             return;
         }
 
-        // Create a map to store the plan data
-        Map<String, Object> planData = new HashMap<>();
-        planData.put("id", plan.getId());
-        planData.put("name", plan.getName());
-        planData.put("description", plan.getDescription());
-        planData.put("difficulty", plan.getDifficulty());
-        planData.put("daysPerWeek", plan.getDaysPerWeek());
-        planData.put("durationWeeks", plan.getDurationWeeks());
-
-        // Add weekly schedule if available
-        if (plan.getWeeklySchedule() != null) {
-            planData.put("weeklySchedule", plan.getWeeklySchedule());
-        }
-
-        // Add exercises if available
-        if (plan.getExercises() != null) {
-            List<Map<String, Object>> exercisesData = new ArrayList<>();
-            for (Exercise exercise : plan.getExercises()) {
-                Map<String, Object> exerciseData = new HashMap<>();
-                exerciseData.put("name", exercise.getName());
-                exerciseData.put("description", exercise.getDescription());
-                exerciseData.put("muscleGroup", exercise.getMuscleGroup());
-                exerciseData.put("sets", exercise.getSets());
-                exerciseData.put("reps", exercise.getRepsPerSet());
-                exerciseData.put("restSeconds", exercise.getRestSeconds());
-                exerciseData.put("unit", exercise.getUnit());
-                exercisesData.add(exerciseData);
+        // Use the SavePlanUseCase to save the plan
+        savePlanUseCase.execute(userId, plan, new SavePlanUseCase.SavePlanCallback() {
+            @Override
+            public void onSuccess() {
+                isLoading.postValue(false);
+                savePlanSuccess.postValue(true);
             }
-            planData.put("exercises", exercisesData);
-        }
 
-        // Save the plan to Firestore
-        firestoreManager.saveUserData(userId, "plans", plan.getId(), planData)
-                .observeForever(result -> {
-                    if (result.isSuccess()) {
-                        // Also save the plan ID as the main plan directly in the user document
-                        Map<String, Object> mainPlanData = new HashMap<>();
-                        mainPlanData.put("mainPlanId", plan.getId());
-
-                        firestoreManager.saveData("users", userId, mainPlanData)
-                                .observeForever(mainPlanResult -> {
-                                    isLoading.setValue(false);
-                                    savePlanSuccess.setValue(mainPlanResult.isSuccess());
-                                });
-                    } else {
-                        isLoading.setValue(false);
-                        savePlanSuccess.setValue(false);
-                    }
-                });
+            @Override
+            public void onError(Exception e) {
+                isLoading.postValue(false);
+                errorMessage.postValue("Failed to save plan: " + e.getMessage());
+                savePlanSuccess.postValue(false);
+            }
+        });
     }
 
-    /**
-     * Get the workout plan LiveData.
-     * @return LiveData containing the workout plan
-     */
+    // Getter methods remain the same
     public LiveData<WorkoutPlan> getWorkoutPlan() {
         return workoutPlan;
     }
 
-    /**
-     * Get the exercises LiveData.
-     * @return LiveData containing the list of exercises
-     */
     public LiveData<List<Exercise>> getExercises() {
         return exercises;
     }
 
-    /**
-     * Get the loading state LiveData.
-     * @return LiveData containing the loading state
-     */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
 
-    /**
-     * Get the save plan success LiveData.
-     * @return LiveData containing the save plan success state
-     */
     public LiveData<Boolean> getSavePlanSuccess() {
         return savePlanSuccess;
     }
 
-    /**
-     * Get the error message LiveData.
-     * @return LiveData containing the error message
-     */
     public LiveData<String> getErrorMessage() {
         return errorMessage;
     }

@@ -48,12 +48,16 @@ public class ExerciseDetailFragment extends Fragment {
             navController.popBackStack();
         });
 
-        // Get exercise ID from arguments
+        // Get exercise ID and plan ID from arguments
         if (getArguments() != null) {
-            String exerciseId = ExerciseDetailFragmentArgs.fromBundle(getArguments()).getExerciseId();
-            if (exerciseId != null && !exerciseId.isEmpty()) {
-                // Load exercise details
-                viewModel.loadExerciseDetails(exerciseId);
+            ExerciseDetailFragmentArgs args = ExerciseDetailFragmentArgs.fromBundle(getArguments());
+            String exerciseId = args.getExerciseId();
+            String planId = args.getPlanId();
+
+            if (!exerciseId.isEmpty() && !planId.isEmpty()) {
+                // Load exercise details and latest log
+                viewModel.loadExerciseDetails();
+                viewModel.loadLatestLog();
             }
         }
 
@@ -69,35 +73,61 @@ public class ExerciseDetailFragment extends Fragment {
         viewModel.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             if (exercise != null) {
                 binding.tvExerciseName.setText(exercise.getName());
-                
-                // Set last try text
-                if (exercise.hasLastTry()) {
-                    binding.tvLastTry.setText(String.format("Last Try: %.1f kg × %d", 
-                            exercise.getLastWeight(), exercise.getLastReps()));
-                    
-                    // Pre-fill the input fields with the last values
-                    binding.etWeight.setText(String.format("%.1f", exercise.getLastWeight()));
-                    binding.etReps.setText(String.valueOf(exercise.getLastReps()));
+            }
+        });
+
+        // Observe latest log
+        viewModel.getLatestLog().observe(getViewLifecycleOwner(), log -> {
+            if (log != null) {
+                // Set last try text with formatted date
+                binding.tvLastTry.setText(String.format("Last Try: %.1f kg × %d on %s",
+                        log.getWeight(), log.getReps(), log.getFormattedDate()));
+
+                // Show notes if available
+                if (log.getNotes() != null && !log.getNotes().isEmpty()) {
+                    binding.tvLastNotes.setVisibility(View.VISIBLE);
+                    binding.tvLastNotes.setText(log.getNotes());
                 } else {
-                    binding.tvLastTry.setText("No previous attempts");
+                    binding.tvLastNotes.setVisibility(View.GONE);
                 }
+
+                // Pre-fill the input fields with the last values
+                binding.etWeight.setText(String.format("%.1f", log.getWeight()));
+                binding.etReps.setText(String.valueOf(log.getReps()));
+
+                // Show the last try section
+                binding.layoutLastTry.setVisibility(View.VISIBLE);
+            } else {
+                // No previous log
+                binding.tvLastTry.setText("No previous attempts");
+                binding.tvLastNotes.setVisibility(View.GONE);
+                binding.layoutLastTry.setVisibility(View.VISIBLE);
             }
         });
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            binding.btnSave.setEnabled(!isLoading);
+        });
+
+        // Observe saving state
+        viewModel.getIsSaving().observe(getViewLifecycleOwner(), isSaving -> {
+            binding.progressBarSave.setVisibility(isSaving ? View.VISIBLE : View.GONE);
+            binding.btnSave.setEnabled(!isSaving);
+            binding.etWeight.setEnabled(!isSaving);
+            binding.etReps.setEnabled(!isSaving);
+            binding.etNotes.setEnabled(!isSaving);
         });
 
         // Observe save success
         viewModel.getSaveSuccess().observe(getViewLifecycleOwner(), success -> {
             if (success) {
                 Toast.makeText(requireContext(), "Exercise log saved successfully", Toast.LENGTH_SHORT).show();
-                
-                // Navigate back to the exercise list
-                NavController navController = Navigation.findNavController(requireView());
-                navController.popBackStack();
+
+                // Clear input fields
+                binding.etWeight.setText("");
+                binding.etReps.setText("");
+                binding.etNotes.setText("");
             }
         });
 

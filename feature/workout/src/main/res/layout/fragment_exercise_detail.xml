@@ -31,18 +31,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <TextView
-        android:id="@+id/tvLastTry"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutLastTry"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="Last Try: 70 kg × 8"
-        android:textColor="@color/accent"
-        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvExerciseName" />
+        app:layout_constraintTop_toBottomOf="@id/tvExerciseName">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Try"
+                android:textColor="@color/accent"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvLastTry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No previous attempts"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvLastNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Notes will appear here"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tvWeightLabel"
@@ -54,7 +90,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@id/tvRepsLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvLastTry" />
+        app:layout_constraintTop_toBottomOf="@id/layoutLastTry" />
 
     <EditText
         android:id="@+id/etWeight"
@@ -84,7 +120,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvWeightLabel"
-        app:layout_constraintTop_toBottomOf="@id/tvLastTry" />
+        app:layout_constraintTop_toBottomOf="@id/layoutLastTry" />
 
     <EditText
         android:id="@+id/etReps"
@@ -146,6 +182,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etNotes" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSave"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/btnSave"
+        app:layout_constraintStart_toEndOf="@id/btnSave"
+        app:layout_constraintTop_toTopOf="@id/btnSave" />
 
     <ProgressBar
         android:id="@+id/progressBar"

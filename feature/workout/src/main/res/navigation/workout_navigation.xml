@@ -29,6 +29,9 @@
         <argument
             android:name="exerciseId"
             app:argType="string" />
+        <argument
+            android:name="planId"
+            app:argType="string" />
     </fragment>
 
     <fragment
