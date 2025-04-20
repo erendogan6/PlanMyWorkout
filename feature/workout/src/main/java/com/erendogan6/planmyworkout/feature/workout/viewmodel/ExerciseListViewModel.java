@@ -4,13 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.erendogan6.planmyworkout.feature.workout.model.Exercise;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.model.WorkoutPlan;
+import com.erendogan6.planmyworkout.feature.workout.repository.WorkoutRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -22,100 +21,58 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ExerciseListViewModel extends ViewModel {
 
+    private final WorkoutRepository repository;
     private final MutableLiveData<WorkoutPlan> workoutPlan = new MutableLiveData<>();
     private final MutableLiveData<List<ExerciseWithProgress>> exercises = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
-    public ExerciseListViewModel() {
-        // Required empty constructor for Hilt
+    public ExerciseListViewModel(WorkoutRepository repository) {
+        this.repository = repository;
     }
 
     /**
      * Load exercises for the given plan ID.
      */
     public void loadExercisesForPlan(String planId) {
+        if (planId == null || planId.isEmpty()) {
+            errorMessage.setValue("Invalid plan ID");
+            return;
+        }
+
         isLoading.setValue(true);
-        
-        // In a real app, this would fetch from a repository
-        // For now, we'll create mock data
-        WorkoutPlan plan = getMockWorkoutPlan(planId);
-        workoutPlan.setValue(plan);
-        
-        if (plan != null && plan.getExercises() != null) {
-            List<ExerciseWithProgress> exercisesWithProgress = createMockExercisesWithProgress(plan.getExercises());
-            exercises.setValue(exercisesWithProgress);
-        } else {
-            exercises.setValue(new ArrayList<>());
-        }
-        
-        isLoading.setValue(false);
-    }
-    
-    /**
-     * Create a mock workout plan.
-     */
-    private WorkoutPlan getMockWorkoutPlan(String planId) {
-        WorkoutPlan plan = new WorkoutPlan(
-                planId,
-                "Full Body Workout",
-                "A comprehensive full body workout targeting all major muscle groups",
-                "Intermediate",
-                3,
-                8
-        );
-        
-        List<Exercise> exerciseList = new ArrayList<>();
-        exerciseList.add(new Exercise("ex1", "Barbell Squat", "A compound lower body exercise", "Legs", "", 3, 10, 90));
-        exerciseList.add(new Exercise("ex2", "Bench Press", "A compound upper body exercise", "Chest", "", 3, 10, 90));
-        exerciseList.add(new Exercise("ex3", "Deadlift", "A compound full body exercise", "Back", "", 3, 8, 120));
-        exerciseList.add(new Exercise("ex4", "Pull-ups", "A compound upper body exercise", "Back", "", 3, 8, 90));
-        exerciseList.add(new Exercise("ex5", "Overhead Press", "A compound upper body exercise", "Shoulders", "", 3, 10, 90));
-        exerciseList.add(new Exercise("ex6", "Dumbbell Lunges", "A unilateral lower body exercise", "Legs", "", 3, 12, 60));
-        
-        plan.setExercises(exerciseList);
-        return plan;
-    }
-    
-    /**
-     * Create mock exercises with progress data.
-     */
-    private List<ExerciseWithProgress> createMockExercisesWithProgress(List<Exercise> exercises) {
-        List<ExerciseWithProgress> result = new ArrayList<>();
-        Random random = new Random();
+        exercises.setValue(new ArrayList<>()); // Clear existing exercises
 
-        for (Exercise exercise : exercises) {
-            // Randomly decide if this exercise has previous attempts
-            boolean hasLastTry = random.nextBoolean();
+        // Load the workout plan from Firestore
+        repository.getWorkoutPlan(planId)
+                .addOnSuccessListener(plan -> {
+                    if (plan != null) {
+                        workoutPlan.setValue(plan);
 
-            if (hasLastTry) {
-                // Generate random weight (between 20 and 150 kg)
-                double weight = 20 + random.nextInt(131);
-                // Generate random reps (between 1 and 12)
-                int reps = 1 + random.nextInt(12);
-
-                result.add(ExerciseWithProgress.fromExerciseWithProgress(exercise, weight, reps));
-            } else {
-                result.add(ExerciseWithProgress.fromExercise(exercise));
-            }
-        }
-
-        return result;
+                        // Load exercises for the plan
+                        repository.getExercisesForPlan(planId)
+                                .addOnSuccessListener(exerciseList -> {
+                                    exercises.setValue(exerciseList);
+                                    isLoading.setValue(false);
+                                })
+                                .addOnFailureListener(e -> {
+                                    errorMessage.setValue("Failed to load exercises: " + e.getMessage());
+                                    exercises.setValue(new ArrayList<>());
+                                    isLoading.setValue(false);
+                                });
+                    } else {
+                        errorMessage.setValue("Workout plan not found");
+                        isLoading.setValue(false);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.setValue("Failed to load workout plan: " + e.getMessage());
+                    isLoading.setValue(false);
+                });
     }
 
-    /**
-     * Set the workout plan.
-     */
-    public void setWorkoutPlan(WorkoutPlan plan) {
-        workoutPlan.setValue(plan);
-    }
 
-    /**
-     * Set the exercises for the workout plan.
-     */
-    public void setExercises(List<ExerciseWithProgress> exerciseList) {
-        exercises.setValue(exerciseList);
-    }
 
     /**
      * Get the workout plan LiveData.
@@ -136,5 +93,12 @@ public class ExerciseListViewModel extends ViewModel {
      */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    /**
+     * Get the error message LiveData.
+     */
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
     }
 }

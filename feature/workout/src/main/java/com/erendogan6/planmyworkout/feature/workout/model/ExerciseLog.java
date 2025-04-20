@@ -1,6 +1,8 @@
 package com.erendogan6.planmyworkout.feature.workout.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Model class representing a log entry for an exercise.
@@ -21,6 +23,14 @@ public class ExerciseLog {
         this.reps = reps;
         this.notes = notes;
         this.timestamp = new Date();
+    }
+
+    public ExerciseLog(String id, double weight, int reps, String notes, Date timestamp) {
+        this.id = id;
+        this.weight = weight;
+        this.reps = reps;
+        this.notes = notes;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -61,5 +71,17 @@ public class ExerciseLog {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    /**
+     * Format the date for display in the UI
+     * @return Formatted date string (e.g., "April 18, 2024")
+     */
+    public String getFormattedDate() {
+        if (timestamp == null) {
+            return "";
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+        return dateFormat.format(timestamp);
     }
 }

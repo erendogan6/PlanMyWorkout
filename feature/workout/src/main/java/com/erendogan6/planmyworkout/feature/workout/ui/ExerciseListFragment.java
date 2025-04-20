@@ -82,7 +82,7 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
                 binding.tvPlanTitle.setText(plan.getName());
             }
         });
-        
+
         // Observe exercises
         viewModel.getExercises().observe(getViewLifecycleOwner(), exercises -> {
             if (exercises != null) {
@@ -98,6 +98,13 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             binding.rvExercises.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
+
+        // Observe error messages
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void updateEmptyState(boolean isEmpty) {
@@ -107,12 +114,23 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
 
     @Override
     public void onExerciseSelected(ExerciseWithProgress exercise) {
+        // Get the plan ID from arguments
+        String planId = null;
+        if (getArguments() != null) {
+            planId = ExerciseListFragmentArgs.fromBundle(getArguments()).getPlanId();
+        }
+
+        if (planId == null || planId.isEmpty()) {
+            Toast.makeText(requireContext(), "Plan ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Navigate to exercise detail screen
         Toast.makeText(requireContext(), "Selected: " + exercise.getName(), Toast.LENGTH_SHORT).show();
 
-        // Navigate to exercise detail
+        // Navigate to exercise detail with both exerciseId and planId
         ExerciseListFragmentDirections.ActionExerciseListFragmentToExerciseDetailFragment action =
-                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseDetailFragment(exercise.getId());
+                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseDetailFragment(exercise.getId(), planId);
         Navigation.findNavController(requireView()).navigate(action);
     }
 
