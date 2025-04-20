@@ -27,11 +27,11 @@ public class PlanDetailViewModel extends ViewModel {
     private final SavePlanUseCase savePlanUseCase;
     private final FirestoreManager firestoreManager;
 
-    private final MutableLiveData<WorkoutPlan> workoutPlan = new MutableLiveData<>();
-    private final MutableLiveData<List<Exercise>> exercises = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> savePlanSuccess = new MutableLiveData<>();
-    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    final MutableLiveData<WorkoutPlan> workoutPlan = new MutableLiveData<>();
+    final MutableLiveData<List<Exercise>> exercises = new MutableLiveData<>();
+    final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    final MutableLiveData<Boolean> savePlanSuccess = new MutableLiveData<>();
+    final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
     public PlanDetailViewModel(
@@ -65,10 +65,9 @@ public class PlanDetailViewModel extends ViewModel {
 
                 // Update LiveData
                 if (selectedPlan != null) {
-                    final WorkoutPlan finalPlan = selectedPlan;
-                    workoutPlan.postValue(finalPlan);
+                    workoutPlan.postValue(selectedPlan);
                     // Use the exercises from the plan
-                    exercises.postValue(finalPlan.getExercises());
+                    exercises.postValue(selectedPlan.getExercises());
                 } else {
                     errorMessage.postValue("Plan not found");
                 }

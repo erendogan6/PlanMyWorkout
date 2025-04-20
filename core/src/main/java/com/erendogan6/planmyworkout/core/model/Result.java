@@ -2,7 +2,7 @@ package com.erendogan6.planmyworkout.core.model;
 
 /**
  * A generic class that holds a result with a status.
- * @param <T> Type of the result data.
+ * @param <T> Type of the result repository.
  */
 public class Result<T> {
     private final Status status;

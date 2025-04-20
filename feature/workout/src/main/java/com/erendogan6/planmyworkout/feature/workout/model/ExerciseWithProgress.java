@@ -37,7 +37,7 @@ public class ExerciseWithProgress implements Serializable {
     }
 
     /**
-     * Create an ExerciseWithProgress from an Exercise with no progress data.
+     * Create an ExerciseWithProgress from an Exercise with no progress repository.
      */
     public static ExerciseWithProgress fromExercise(Exercise exercise) {
         return new ExerciseWithProgress(
@@ -55,7 +55,7 @@ public class ExerciseWithProgress implements Serializable {
     }
 
     /**
-     * Create an ExerciseWithProgress from an Exercise with progress data.
+     * Create an ExerciseWithProgress from an Exercise with progress repository.
      */
     public static ExerciseWithProgress fromExerciseWithProgress(Exercise exercise, Double weight, Integer reps) {
         return new ExerciseWithProgress(
@@ -164,7 +164,7 @@ public class ExerciseWithProgress implements Serializable {
     }
 
     /**
-     * Check if this exercise has previous attempt data.
+     * Check if this exercise has previous attempt repository.
      */
     public boolean hasLastTry() {
         return lastWeight != null && lastReps != null;

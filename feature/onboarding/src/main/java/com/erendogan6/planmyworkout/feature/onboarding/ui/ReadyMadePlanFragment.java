@@ -80,16 +80,16 @@ public class ReadyMadePlanFragment extends Fragment implements WorkoutPlanAdapte
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (binding != null) {
-                binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                binding.recyclerViewPlans.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+                binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
+                binding.recyclerViewPlans.setVisibility(Boolean.TRUE.equals(isLoading) ? View.GONE : View.VISIBLE);
             }
         });
 
         // Observe empty state
         viewModel.getIsEmpty().observe(getViewLifecycleOwner(), isEmpty -> {
             if (binding != null) {
-                binding.textViewEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-                binding.recyclerViewPlans.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+                binding.textViewEmpty.setVisibility(Boolean.TRUE.equals(isEmpty) ? View.VISIBLE : View.GONE);
+                binding.recyclerViewPlans.setVisibility(Boolean.TRUE.equals(isEmpty) ? View.GONE : View.VISIBLE);
             }
         });
 

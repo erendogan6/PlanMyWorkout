@@ -56,7 +56,7 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
         // Get plan ID from arguments
         if (getArguments() != null) {
             String planId = ExerciseListFragmentArgs.fromBundle(getArguments()).getPlanId();
-            if (planId != null && !planId.isEmpty()) {
+            if (!planId.isEmpty()) {
                 // Load exercises for the plan
                 viewModel.loadExercisesForPlan(planId);
             }
@@ -95,8 +95,8 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            binding.rvExercises.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
+            binding.rvExercises.setVisibility(Boolean.TRUE.equals(isLoading) ? View.GONE : View.VISIBLE);
         });
 
         // Observe error messages

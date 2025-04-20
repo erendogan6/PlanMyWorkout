@@ -37,12 +37,12 @@ public class FirestoreManager {
     }
 
     /**
-     * Save data to Firestore.
+     * Save repository to Firestore.
      *
      * @param collection Collection name
      * @param documentId Document ID
      * @param data       Data to save
-     * @param <T>        Type of data
+     * @param <T>        Type of repository
      * @return LiveData with result
      */
     public <T> LiveData<Result<Boolean>> saveData(String collection, String documentId, T data) {
@@ -59,13 +59,13 @@ public class FirestoreManager {
     }
 
     /**
-     * Save data to a user's subcollection.
+     * Save repository to a user's subcollection.
      *
      * @param userId       User ID
      * @param subcollection Subcollection name
      * @param documentId   Document ID
      * @param data         Data to save
-     * @param <T>          Type of data
+     * @param <T>          Type of repository
      * @return LiveData with result
      */
     public <T> LiveData<Result<Boolean>> saveUserData(String userId, String subcollection, String documentId, T data) {

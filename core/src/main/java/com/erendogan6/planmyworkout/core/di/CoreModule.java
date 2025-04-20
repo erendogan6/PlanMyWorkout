@@ -22,22 +22,6 @@ import dagger.hilt.components.SingletonComponent;
 public class CoreModule {
 
     /**
-     * Provides FirebaseAuth instance.
-     *
-     * @param context Application context
-     * @return FirebaseAuth instance
-     */
-    @Provides
-    @Singleton
-    public FirebaseAuth provideFirebaseAuth(@ApplicationContext Context context) {
-        // Ensure Firebase is initialized
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context);
-        }
-        return FirebaseAuth.getInstance();
-    }
-
-    /**
      * Provides FirebaseFirestore instance.
      *
      * @param context Application context
