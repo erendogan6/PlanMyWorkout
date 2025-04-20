@@ -14,13 +14,14 @@ public class Exercise implements Serializable {
     private int sets;
     private int repsPerSet;
     private int restSeconds;
+    private String unit; // e.g., "reps", "seconds"
 
     public Exercise() {
         // Required empty constructor for Firestore
     }
 
-    public Exercise(String id, String name, String description, String muscleGroup, 
-                   String imageUrl, int sets, int repsPerSet, int restSeconds) {
+    public Exercise(String id, String name, String description, String muscleGroup,
+                   String imageUrl, int sets, int repsPerSet, int restSeconds, String unit) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -29,6 +30,7 @@ public class Exercise implements Serializable {
         this.sets = sets;
         this.repsPerSet = repsPerSet;
         this.restSeconds = restSeconds;
+        this.unit = unit;
     }
 
     public String getId() {
@@ -93,5 +95,13 @@ public class Exercise implements Serializable {
 
     public void setRestSeconds(int restSeconds) {
         this.restSeconds = restSeconds;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

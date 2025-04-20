@@ -91,9 +91,16 @@ public class PlanDetailFragment extends Fragment {
                 // Plan saved successfully, navigate to home screen
                 Toast.makeText(requireContext(), "Plan started! Redirecting to home screen.", Toast.LENGTH_SHORT).show();
 
-                // Navigate to home
+                // Navigate to home using Navigation Component
                 Navigation.findNavController(requireView())
                         .navigate(R.id.action_planDetailFragment_to_home_navigation);
+            }
+        });
+
+        // Observe error message
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -107,38 +114,18 @@ public class PlanDetailFragment extends Fragment {
         binding.tvDaysPerWeek.setText(plan.getDaysPerWeek() + " days");
         binding.tvDuration.setText(plan.getDurationWeeks() + " weeks");
 
-        // Format the schedule text based on the plan's days per week
+        // Format the schedule text based on the weekly schedule from Firestore
         StringBuilder scheduleBuilder = new StringBuilder();
-        switch (plan.getDaysPerWeek()) {
-            case 3:
-                scheduleBuilder.append("Monday: Full Body\n");
-                scheduleBuilder.append("Wednesday: Full Body\n");
-                scheduleBuilder.append("Friday: Full Body");
-                break;
-            case 4:
-                scheduleBuilder.append("Monday: Upper Body\n");
-                scheduleBuilder.append("Tuesday: Lower Body\n");
-                scheduleBuilder.append("Thursday: Upper Body\n");
-                scheduleBuilder.append("Friday: Lower Body");
-                break;
-            case 5:
-                scheduleBuilder.append("Monday: Chest\n");
-                scheduleBuilder.append("Tuesday: Back\n");
-                scheduleBuilder.append("Wednesday: Legs\n");
-                scheduleBuilder.append("Thursday: Shoulders\n");
-                scheduleBuilder.append("Friday: Arms");
-                break;
-            case 6:
-                scheduleBuilder.append("Monday: Push\n");
-                scheduleBuilder.append("Tuesday: Pull\n");
-                scheduleBuilder.append("Wednesday: Legs\n");
-                scheduleBuilder.append("Thursday: Push\n");
-                scheduleBuilder.append("Friday: Pull\n");
-                scheduleBuilder.append("Saturday: Legs");
-                break;
-            default:
-                scheduleBuilder.append("Custom schedule");
-                break;
+        List<String> weeklySchedule = plan.getWeeklySchedule();
+
+        if (weeklySchedule != null && !weeklySchedule.isEmpty()) {
+            // Use the weekly schedule from Firestore
+            for (int i = 0; i < weeklySchedule.size(); i++) {
+                scheduleBuilder.append(weeklySchedule.get(i));
+                if (i < weeklySchedule.size() - 1) {
+                    scheduleBuilder.append("\n");
+                }
+            }
         }
         binding.tvSchedule.setText(scheduleBuilder.toString());
     }

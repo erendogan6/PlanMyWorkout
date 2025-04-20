@@ -21,7 +21,9 @@
             app:destination="@id/aiGeneratePlanFragment" />
         <action
             android:id="@+id/action_onboardingSelectionFragment_to_home_navigation"
-            app:destination="@id/home_navigation" />
+            app:destination="@id/onboardingSelectionFragment"
+            app:popUpTo="@id/onboardingSelectionFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -41,7 +43,9 @@
         tools:layout="@layout/fragment_create_own_plan">
         <action
             android:id="@+id/action_createOwnPlanFragment_to_home_navigation"
-            app:destination="@id/home_navigation" />
+            app:destination="@id/onboardingSelectionFragment"
+            app:popUpTo="@id/onboardingSelectionFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -61,7 +65,9 @@
         tools:layout="@layout/fragment_plan_detail_improved">
         <action
             android:id="@+id/action_planDetailFragment_to_home_navigation"
-            app:destination="@id/home_navigation" />
+            app:destination="@id/home_navigation"
+            app:popUpTo="@id/onboardingSelectionFragment"
+            app:popUpToInclusive="true" />
         <argument
             android:name="planId"
             app:argType="string" />

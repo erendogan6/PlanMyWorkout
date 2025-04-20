@@ -21,47 +21,48 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class ReadyMadePlansViewModel extends ViewModel {
 
     private final GetReadyMadePlansUseCase getReadyMadePlansUseCase;
-    
+
     private final MutableLiveData<List<WorkoutPlan>> workoutPlans = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
-    
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
     @Inject
     public ReadyMadePlansViewModel(GetReadyMadePlansUseCase getReadyMadePlansUseCase) {
         this.getReadyMadePlansUseCase = getReadyMadePlansUseCase;
     }
-    
+
     /**
      * Load workout plans from the use case.
      */
     public void loadWorkoutPlans() {
         isLoading.setValue(true);
-        
-        // Simulate network delay
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000); // Simulate network delay
-                
-                // Get workout plans from use case
-                List<WorkoutPlan> plans = getReadyMadePlansUseCase.execute();
-                
-                // Update LiveData based on result
+        errorMessage.setValue(null); // Clear any previous error
+
+        // Try to load from Firestore first
+        getReadyMadePlansUseCase.execute(new GetReadyMadePlansUseCase.GetReadyMadePlansCallback() {
+            @Override
+            public void onSuccess(List<WorkoutPlan> plans) {
                 if (plans != null && !plans.isEmpty()) {
                     workoutPlans.postValue(plans);
                     isEmpty.postValue(false);
                 } else {
+                    // If Firestore returns empty, show empty state
                     isEmpty.postValue(true);
                 }
-                
                 isLoading.postValue(false);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                isLoading.postValue(false);
-                isEmpty.postValue(true);
             }
-        }).start();
+
+            @Override
+            public void onError(Exception e) {
+                // If Firestore fails, show error
+                isEmpty.postValue(true);
+                errorMessage.postValue("Failed to load workout plans: " + e.getMessage());
+                isLoading.postValue(false);
+            }
+        });
     }
-    
+
     /**
      * Get the workout plans LiveData.
      * @return LiveData containing the list of workout plans
@@ -69,7 +70,7 @@ public class ReadyMadePlansViewModel extends ViewModel {
     public LiveData<List<WorkoutPlan>> getWorkoutPlans() {
         return workoutPlans;
     }
-    
+
     /**
      * Get the loading state LiveData.
      * @return LiveData containing the loading state
@@ -77,12 +78,20 @@ public class ReadyMadePlansViewModel extends ViewModel {
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
-    
+
     /**
      * Get the empty state LiveData.
      * @return LiveData containing the empty state
      */
     public LiveData<Boolean> getIsEmpty() {
         return isEmpty;
+    }
+
+    /**
+     * Get the error message LiveData.
+     * @return LiveData containing the error message
+     */
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
     }
 }

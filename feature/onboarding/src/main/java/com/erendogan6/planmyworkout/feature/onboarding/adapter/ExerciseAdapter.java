@@ -67,11 +67,12 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
             binding.tvExerciseName.setText(exercise.getName());
             binding.tvExerciseDescription.setText(exercise.getDescription());
             binding.tvMuscleGroup.setText(exercise.getMuscleGroup());
-            
-            // Format the sets and reps text
-            String setsReps = exercise.getSets() + " sets × " + exercise.getRepsPerSet() + " reps";
+
+            // Format the sets and reps text with the unit
+            String unit = exercise.getUnit() != null ? exercise.getUnit() : "reps";
+            String setsReps = exercise.getSets() + " sets × " + exercise.getRepsPerSet() + " " + unit;
             binding.tvSetsReps.setText(setsReps);
-            
+
             // Format the rest time text
             String restTime = exercise.getRestSeconds() + " sec rest";
             binding.tvRestTime.setText(restTime);
