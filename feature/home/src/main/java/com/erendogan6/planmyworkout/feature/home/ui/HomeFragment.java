@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -88,10 +90,38 @@ public class HomeFragment extends Fragment {
 
         viewModel.getCurrentPlan().observe(getViewLifecycleOwner(), plan -> {
             if (plan != null) {
+                // Set plan name
                 binding.tvCurrentPlanName.setText(plan.getName());
+
+                // Set schedule
+                if (plan.getWeeklySchedule() != null && !plan.getWeeklySchedule().isEmpty()) {
+                    binding.tvPlanSchedule.setText(String.join(", ", plan.getWeeklySchedule()));
+                } else {
+                    binding.tvPlanSchedule.setText(plan.getDaysPerWeek() + " days per week");
+                }
+
+                // Set duration
+                binding.tvPlanDuration.setText(plan.getDurationWeeks() + " weeks program");
+
+                // Set exercises preview
+                if (plan.getExerciseNames() != null && !plan.getExerciseNames().isEmpty()) {
+                    // Show first 3 exercises with ellipsis if there are more
+                    List<String> previewExercises = plan.getExerciseNames().subList(
+                            0, Math.min(3, plan.getExerciseNames().size()));
+                    String exercisesText = String.join(", ", previewExercises);
+                    if (plan.getExerciseNames().size() > 3) {
+                        exercisesText += "...";
+                    }
+                    binding.tvPlanExercises.setText(exercisesText);
+                } else {
+                    binding.tvPlanExercises.setVisibility(View.GONE);
+                }
+
+                // Show the plan layout and hide the no plan message
                 binding.tvNoWorkoutPlan.setVisibility(View.GONE);
                 binding.layoutCurrentPlan.setVisibility(View.VISIBLE);
             } else {
+                // No plan available, show the no plan message
                 binding.tvNoWorkoutPlan.setVisibility(View.VISIBLE);
                 binding.layoutCurrentPlan.setVisibility(View.GONE);
             }

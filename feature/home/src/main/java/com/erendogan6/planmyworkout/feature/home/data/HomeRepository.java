@@ -9,6 +9,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -72,12 +76,12 @@ public class HomeRepository {
                                 return document.getString("mainPlanId");
                             }
                         }
-                        // Return a mock plan ID for testing
-                        return "mock_plan_1";
+                        // Return null if no plan ID is found
+                        return null;
                     });
         }
-        // Create a task that returns a mock plan ID for testing
-        return Tasks.call(() -> "mock_plan_1");
+        // Create a task that returns null if no user is logged in
+        return Tasks.call(() -> null);
     }
 
     /**
@@ -87,40 +91,62 @@ public class HomeRepository {
      * @return Task with the workout plan
      */
     public Task<WorkoutPlan> getWorkoutPlan(String planId) {
-        // Try to get the plan from Firestore first
-        return firestore.collection("plans")
+        String userId = firestoreManager.getCurrentUserId();
+        if (userId == null || planId == null) {
+            return Tasks.call(() -> null);
+        }
+
+        // Get the plan from the user's plans collection
+        return firestore.collection("users")
+                .document(userId)
+                .collection("plans")
                 .document(planId)
                 .get()
                 .continueWith(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            WorkoutPlan plan = document.toObject(WorkoutPlan.class);
-                            if (plan != null) {
-                                plan.setId(document.getId());
-                                return plan;
+                            // Create a new WorkoutPlan object and populate it manually
+                            WorkoutPlan plan = new WorkoutPlan();
+                            plan.setId(document.getId());
+                            plan.setName(document.getString("name"));
+                            plan.setDescription(document.getString("description"));
+                            plan.setDifficulty(document.getString("difficulty"));
+
+                            // Get days per week and duration
+                            Long daysPerWeek = document.getLong("daysPerWeek");
+                            if (daysPerWeek != null) {
+                                plan.setDaysPerWeek(daysPerWeek.intValue());
                             }
+
+                            Long durationWeeks = document.getLong("durationWeeks");
+                            if (durationWeeks != null) {
+                                plan.setDurationWeeks(durationWeeks.intValue());
+                            }
+
+                            // Get weekly schedule
+                            List<String> weeklySchedule = (List<String>) document.get("weeklySchedule");
+                            plan.setWeeklySchedule(weeklySchedule);
+
+                            // Get exercises
+                            List<Map<String, Object>> exercisesData = (List<Map<String, Object>>) document.get("exercises");
+                            if (exercisesData != null) {
+                                List<String> exerciseNames = new ArrayList<>();
+                                for (Map<String, Object> exerciseData : exercisesData) {
+                                    String exerciseName = (String) exerciseData.get("name");
+                                    if (exerciseName != null) {
+                                        exerciseNames.add(exerciseName);
+                                    }
+                                }
+                                plan.setExerciseNames(exerciseNames);
+                            }
+
+                            return plan;
                         }
                     }
-
-                    // If no plan found or error, return a mock plan for testing
-                    return createMockWorkoutPlan(planId);
+                    return null;
                 });
     }
 
-    /**
-     * Create a mock workout plan for testing.
-     *
-     * @param planId The plan ID
-     * @return A mock workout plan
-     */
-    private WorkoutPlan createMockWorkoutPlan(String planId) {
-        WorkoutPlan plan = new WorkoutPlan();
-        plan.setId(planId);
-        plan.setName("Full Body Workout");
-        plan.setDescription("A comprehensive full body workout targeting all major muscle groups");
-        plan.setFrequency("3 days/week");
-        plan.setDifficulty("Intermediate");
-        return plan;
-    }
+
 }
