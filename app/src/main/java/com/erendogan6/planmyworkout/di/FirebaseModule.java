@@ -24,39 +24,6 @@ import dagger.hilt.components.SingletonComponent;
 @Module
 @InstallIn(SingletonComponent.class)
 public class FirebaseModule {
-
-    /**
-     * Provides FirebaseAuth instance.
-     *
-     * @param context Application context
-     * @return FirebaseAuth instance
-     */
-    @Provides
-    @Singleton
-    public FirebaseAuth provideFirebaseAuth(@ApplicationContext Context context) {
-        // Ensure Firebase is initialized
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context);
-        }
-        return FirebaseAuth.getInstance();
-    }
-
-    /**
-     * Provides FirebaseFirestore instance.
-     *
-     * @param context Application context
-     * @return FirebaseFirestore instance
-     */
-    @Provides
-    @Singleton
-    public FirebaseFirestore provideFirebaseFirestore(@ApplicationContext Context context) {
-        // Ensure Firebase is initialized
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context);
-        }
-        return FirebaseFirestore.getInstance();
-    }
-
     /**
      * Provides AuthRepository implementation.
      * Using real AuthRepositoryImpl since we have a Firebase project set up.

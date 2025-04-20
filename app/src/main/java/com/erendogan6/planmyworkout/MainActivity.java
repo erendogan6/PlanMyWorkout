@@ -31,12 +31,6 @@ public class MainActivity extends AppCompatActivity {
         
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
-            
-            // Set up Bottom Navigation
-            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-            if (bottomNav != null) {
-                NavigationUI.setupWithNavController(bottomNav, navController);
-            }
         }
     }
 
