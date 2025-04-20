@@ -114,15 +114,37 @@ public class PlanDetailViewModel extends ViewModel {
         planData.put("daysPerWeek", plan.getDaysPerWeek());
         planData.put("durationWeeks", plan.getDurationWeeks());
 
+        // Add weekly schedule if available
+        if (plan.getWeeklySchedule() != null) {
+            planData.put("weeklySchedule", plan.getWeeklySchedule());
+        }
+
+        // Add exercises if available
+        if (plan.getExercises() != null) {
+            List<Map<String, Object>> exercisesData = new ArrayList<>();
+            for (Exercise exercise : plan.getExercises()) {
+                Map<String, Object> exerciseData = new HashMap<>();
+                exerciseData.put("name", exercise.getName());
+                exerciseData.put("description", exercise.getDescription());
+                exerciseData.put("muscleGroup", exercise.getMuscleGroup());
+                exerciseData.put("sets", exercise.getSets());
+                exerciseData.put("reps", exercise.getRepsPerSet());
+                exerciseData.put("restSeconds", exercise.getRestSeconds());
+                exerciseData.put("unit", exercise.getUnit());
+                exercisesData.add(exerciseData);
+            }
+            planData.put("exercises", exercisesData);
+        }
+
         // Save the plan to Firestore
         firestoreManager.saveUserData(userId, "plans", plan.getId(), planData)
                 .observeForever(result -> {
                     if (result.isSuccess()) {
-                        // Also save the plan ID as the main plan
+                        // Also save the plan ID as the main plan directly in the user document
                         Map<String, Object> mainPlanData = new HashMap<>();
                         mainPlanData.put("mainPlanId", plan.getId());
 
-                        firestoreManager.saveUserData(userId, "settings", "mainPlan", mainPlanData)
+                        firestoreManager.saveData("users", userId, mainPlanData)
                                 .observeForever(mainPlanResult -> {
                                     isLoading.setValue(false);
                                     savePlanSuccess.setValue(mainPlanResult.isSuccess());
