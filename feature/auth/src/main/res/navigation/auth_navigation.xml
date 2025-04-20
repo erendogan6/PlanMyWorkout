@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.erendogan6.planmyworkout.feature.auth."
+        android:name="com.erendogan6.planmyworkout.feature.auth.ui.RegisterFragment"
         android:label="Register"
         tools:layout="@layout/fragment_register">
         <action
