@@ -11,15 +11,16 @@ public class WorkoutPlan implements Serializable {
     private String name;
     private String description;
     private String difficulty;
-    private int daysPerWeek;
+    private int daysPerWeek; // This will be mapped from 'days' in Firestore
     private int durationWeeks;
+    private List<String> weeklySchedule; // New field for the days of the week
     private List<Exercise> exercises;
 
     public WorkoutPlan() {
         // Required empty constructor for Firestore
     }
 
-    public WorkoutPlan(String id, String name, String description, String difficulty, 
+    public WorkoutPlan(String id, String name, String description, String difficulty,
                       int daysPerWeek, int durationWeeks) {
         this.id = id;
         this.name = name;
@@ -83,5 +84,13 @@ public class WorkoutPlan implements Serializable {
 
     public void setExercises(List<Exercise> exercises) {
         this.exercises = exercises;
+    }
+
+    public List<String> getWeeklySchedule() {
+        return weeklySchedule;
+    }
+
+    public void setWeeklySchedule(List<String> weeklySchedule) {
+        this.weeklySchedule = weeklySchedule;
     }
 }

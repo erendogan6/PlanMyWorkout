@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -89,6 +90,14 @@ public class ReadyMadePlanFragment extends Fragment implements WorkoutPlanAdapte
             if (binding != null) {
                 binding.textViewEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
                 binding.recyclerViewPlans.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        // Observe error message
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (binding != null && errorMessage != null && !errorMessage.isEmpty()) {
+                // Show a toast with the error message
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
