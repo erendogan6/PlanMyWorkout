@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.model.WorkoutPlan;
-import com.erendogan6.planmyworkout.feature.workout.repository.WorkoutRepository;
+import com.erendogan6.planmyworkout.feature.workout.usecase.GetExercisesForPlanUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.GetWorkoutPlanUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,19 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ExerciseListViewModel extends ViewModel {
 
-    private final WorkoutRepository repository;
+    private final GetWorkoutPlanUseCase getWorkoutPlanUseCase;
+    private final GetExercisesForPlanUseCase getExercisesForPlanUseCase;
     private final MutableLiveData<WorkoutPlan> workoutPlan = new MutableLiveData<>();
     private final MutableLiveData<List<ExerciseWithProgress>> exercises = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
-    public ExerciseListViewModel(WorkoutRepository repository) {
-        this.repository = repository;
+    public ExerciseListViewModel(
+            GetWorkoutPlanUseCase getWorkoutPlanUseCase,
+            GetExercisesForPlanUseCase getExercisesForPlanUseCase) {
+        this.getWorkoutPlanUseCase = getWorkoutPlanUseCase;
+        this.getExercisesForPlanUseCase = getExercisesForPlanUseCase;
     }
 
     /**
@@ -45,13 +50,13 @@ public class ExerciseListViewModel extends ViewModel {
         exercises.setValue(new ArrayList<>()); // Clear existing exercises
 
         // Load the workout plan from Firestore
-        repository.getWorkoutPlan(planId)
+        getWorkoutPlanUseCase.execute(planId)
                 .addOnSuccessListener(plan -> {
                     if (plan != null) {
                         workoutPlan.setValue(plan);
 
                         // Load exercises for the plan
-                        repository.getExercisesForPlan(planId)
+                        getExercisesForPlanUseCase.execute(planId)
                                 .addOnSuccessListener(exerciseList -> {
                                     exercises.setValue(exerciseList);
                                     isLoading.setValue(false);
@@ -71,8 +76,6 @@ public class ExerciseListViewModel extends ViewModel {
                     isLoading.setValue(false);
                 });
     }
-
-
 
     /**
      * Get the workout plan LiveData.

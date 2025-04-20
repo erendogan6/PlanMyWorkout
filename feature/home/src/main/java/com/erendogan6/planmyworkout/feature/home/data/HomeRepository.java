@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Repository for home screen data.
+ * Repository for home screen repository.
  */
 @Singleton
 public class HomeRepository {
@@ -55,7 +55,7 @@ public class HomeRepository {
                     });
         }
         // Create a task that returns a default value
-        return Tasks.call(() -> "User");
+        return Tasks.forResult(null);
     }
 
     /**
@@ -81,7 +81,7 @@ public class HomeRepository {
                     });
         }
         // Create a task that returns null if no user is logged in
-        return Tasks.call(() -> null);
+        return Tasks.forResult(null);
     }
 
     /**
@@ -93,7 +93,7 @@ public class HomeRepository {
     public Task<WorkoutPlan> getWorkoutPlan(String planId) {
         String userId = firestoreManager.getCurrentUserId();
         if (userId == null || planId == null) {
-            return Tasks.call(() -> null);
+            return Tasks.forResult(null);
         }
 
         // Get the plan from the user's plans collection

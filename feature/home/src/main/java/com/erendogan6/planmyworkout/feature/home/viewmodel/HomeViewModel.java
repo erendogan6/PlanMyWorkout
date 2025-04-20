@@ -30,18 +30,14 @@ public class HomeViewModel extends ViewModel {
     }
     
     private void loadUserData() {
-        homeRepository.getUserName().addOnSuccessListener(name -> {
-            userName.setValue(name);
-        });
+        homeRepository.getUserName().addOnSuccessListener(userName::setValue);
     }
     
     private void loadCurrentPlan() {
         homeRepository.getCurrentPlanId().addOnSuccessListener(planId -> {
             if (planId != null && !planId.isEmpty()) {
                 currentPlanId = planId;
-                homeRepository.getWorkoutPlan(planId).addOnSuccessListener(plan -> {
-                    currentPlan.setValue(plan);
-                });
+                homeRepository.getWorkoutPlan(planId).addOnSuccessListener(currentPlan::setValue);
             }
         });
     }

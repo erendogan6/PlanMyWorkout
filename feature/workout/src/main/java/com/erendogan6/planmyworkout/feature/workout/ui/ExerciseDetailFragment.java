@@ -20,7 +20,7 @@ import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseDetailView
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * Fragment for logging workout data for a specific exercise.
+ * Fragment for logging workout repository for a specific exercise.
  */
 @AndroidEntryPoint
 public class ExerciseDetailFragment extends Fragment {
@@ -106,13 +106,11 @@ public class ExerciseDetailFragment extends Fragment {
         });
 
         // Observe loading state
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        });
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE));
 
         // Observe saving state
         viewModel.getIsSaving().observe(getViewLifecycleOwner(), isSaving -> {
-            binding.progressBarSave.setVisibility(isSaving ? View.VISIBLE : View.GONE);
+            binding.progressBarSave.setVisibility(Boolean.TRUE.equals(isSaving) ? View.VISIBLE : View.GONE);
             binding.btnSave.setEnabled(!isSaving);
             binding.etWeight.setEnabled(!isSaving);
             binding.etReps.setEnabled(!isSaving);
@@ -121,7 +119,7 @@ public class ExerciseDetailFragment extends Fragment {
 
         // Observe save success
         viewModel.getSaveSuccess().observe(getViewLifecycleOwner(), success -> {
-            if (success) {
+            if (Boolean.TRUE.equals(success)) {
                 Toast.makeText(requireContext(), "Exercise log saved successfully", Toast.LENGTH_SHORT).show();
 
                 // Clear input fields

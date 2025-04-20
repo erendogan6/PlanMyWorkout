@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
-import com.erendogan6.planmyworkout.feature.workout.repository.WorkoutRepository;
+import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.GetLatestExerciseLogUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.SaveExerciseLogUseCase;
 
 import javax.inject.Inject;
 
@@ -19,7 +21,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ExerciseDetailViewModel extends ViewModel {
 
-    private final WorkoutRepository repository;
+    private final GetExerciseUseCase getExerciseUseCase;
+    private final GetLatestExerciseLogUseCase getLatestExerciseLogUseCase;
+    private final SaveExerciseLogUseCase saveExerciseLogUseCase;
     private final SavedStateHandle savedStateHandle;
     private final MutableLiveData<ExerciseWithProgress> exercise = new MutableLiveData<>();
     private final MutableLiveData<ExerciseLog> latestLog = new MutableLiveData<>();
@@ -29,8 +33,14 @@ public class ExerciseDetailViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     @Inject
-    public ExerciseDetailViewModel(WorkoutRepository repository, SavedStateHandle savedStateHandle) {
-        this.repository = repository;
+    public ExerciseDetailViewModel(
+            GetExerciseUseCase getExerciseUseCase,
+            GetLatestExerciseLogUseCase getLatestExerciseLogUseCase,
+            SaveExerciseLogUseCase saveExerciseLogUseCase,
+            SavedStateHandle savedStateHandle) {
+        this.getExerciseUseCase = getExerciseUseCase;
+        this.getLatestExerciseLogUseCase = getLatestExerciseLogUseCase;
+        this.saveExerciseLogUseCase = saveExerciseLogUseCase;
         this.savedStateHandle = savedStateHandle;
     }
 
@@ -67,7 +77,7 @@ public class ExerciseDetailViewModel extends ViewModel {
 
         if (exerciseId != null && planId != null) {
             isLoading.setValue(true);
-            repository.getExercise(planId, exerciseId)
+            getExerciseUseCase.execute(planId, exerciseId)
                     .addOnSuccessListener(loadedExercise -> {
                         exercise.setValue(loadedExercise);
                         isLoading.setValue(false);
@@ -88,15 +98,12 @@ public class ExerciseDetailViewModel extends ViewModel {
 
         if (exerciseId != null && planId != null) {
             isLoading.setValue(true);
-            repository.getLatestExerciseLog(planId, exerciseId)
+            getLatestExerciseLogUseCase.execute(planId, exerciseId)
                     .addOnSuccessListener(log -> {
                         latestLog.setValue(log);
                         isLoading.setValue(false);
                     })
-                    .addOnFailureListener(e -> {
-                        // It's okay if there's no log yet, just set loading to false
-                        isLoading.setValue(false);
-                    });
+                    .addOnFailureListener(e -> isLoading.setValue(false));
         }
     }
 
@@ -127,11 +134,11 @@ public class ExerciseDetailViewModel extends ViewModel {
         isSaving.setValue(true);
 
         // Save to Firestore
-        repository.saveExerciseLog(planId, exerciseId, weight, reps, notes)
+        saveExerciseLogUseCase.execute(planId, exerciseId, weight, reps, notes)
                 .addOnSuccessListener(aVoid -> {
                     saveSuccess.setValue(true);
                     isSaving.setValue(false);
-                    // Reload the latest log to show the updated data
+                    // Reload the latest log to show the updated repository
                     loadLatestLog();
                 })
                 .addOnFailureListener(e -> {

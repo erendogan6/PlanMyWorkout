@@ -32,7 +32,6 @@ public class PlanDetailFragment extends Fragment {
 
     private FragmentPlanDetailImprovedBinding binding;
     private PlanDetailViewModel viewModel;
-    private String planId;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class PlanDetailFragment extends Fragment {
         // Get the plan ID from the arguments
         if (getArguments() != null) {
             PlanDetailFragmentArgs args = PlanDetailFragmentArgs.fromBundle(getArguments());
-            planId = args.getPlanId();
+            String planId = args.getPlanId();
             viewModel.loadPlanDetails(planId);
         }
 
@@ -80,9 +79,9 @@ public class PlanDetailFragment extends Fragment {
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
             binding.btnStartPlan.setEnabled(!isLoading);
-            binding.cardExercises.setAlpha(isLoading ? 0.5f : 1.0f);
+            binding.cardExercises.setAlpha(Boolean.TRUE.equals(isLoading) ? 0.5f : 1.0f);
         });
 
         // Observe save plan success

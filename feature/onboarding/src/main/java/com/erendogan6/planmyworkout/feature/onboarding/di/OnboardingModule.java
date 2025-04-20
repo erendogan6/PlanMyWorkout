@@ -18,8 +18,6 @@ import dagger.hilt.components.SingletonComponent;
 @InstallIn(SingletonComponent.class)
 public class OnboardingModule {
 
-    // FirebaseFirestore is already provided by CoreModule
-
     @Provides
     @Singleton
     public WorkoutPlanRepository provideWorkoutPlanRepository(FirebaseFirestore firestore) {
