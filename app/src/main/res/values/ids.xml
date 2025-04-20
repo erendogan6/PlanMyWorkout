@@ -5,6 +5,4 @@
     <item name="onboarding_navigation" type="id" />
     <item name="home_navigation" type="id" />
     <item name="workout_navigation" type="id" />
-    <item name="progress_navigation" type="id" />
-    <item name="profile_navigation" type="id" />
 </resources>

@@ -1,7 +1,6 @@
 package com.erendogan6.planmyworkout;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -15,9 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
-
     private NavController navController;
 
     @Override
@@ -31,10 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
-
-            // For now, we'll just use the default navigation graph
-            // which starts with auth_navigation
-            Log.d(TAG, "Setting up navigation");
         }
     }
 

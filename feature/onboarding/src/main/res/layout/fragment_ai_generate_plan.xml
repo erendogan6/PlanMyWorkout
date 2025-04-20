@@ -77,7 +77,6 @@
         app:layout_constraintTop_toBottomOf="@id/tvExperienceLabel">
 
         <RadioButton
-            android:id="@+id/rbBeginner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -85,14 +84,12 @@
             android:textColor="@color/white" />
 
         <RadioButton
-            android:id="@+id/rbIntermediate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Intermediate"
             android:textColor="@color/white" />
 
         <RadioButton
-            android:id="@+id/rbAdvanced"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Advanced"

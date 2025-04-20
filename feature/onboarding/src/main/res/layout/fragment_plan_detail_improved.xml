@@ -36,7 +36,6 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/ivHeroBackground"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
@@ -130,7 +129,6 @@
 
                     <!-- Plan Stats -->
                     <LinearLayout
-                        android:id="@+id/layoutStats"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

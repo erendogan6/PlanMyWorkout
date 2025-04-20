@@ -17,29 +17,8 @@
     <string name="have_account">Already have an account?</string>
 
     <!-- Error Messages -->
-    <string name="error_invalid_email">Please enter a valid email address</string>
-    <string name="error_invalid_password">Password must be at least 6 characters</string>
-    <string name="error_login_failed">Login failed. Please check your credentials.</string>
-    <string name="error_reset_password">Failed to send password reset email</string>
-    <string name="error_passwords_dont_match">Passwords don\'t match</string>
-    <string name="error_registration_failed">Registration failed</string>
 
     <!-- Onboarding Screen -->
-    <string name="how_would_you_like_to_start">How would you like to start?</string>
-    <string name="choose_an_option_below">Choose an option below to begin your fitness journey</string>
-    <string name="choose_a_ready_made_plan">Choose a Ready-Made Plan</string>
-    <string name="ready_made_plan">Ready-Made Plan</string>
-    <string name="ready_made_description">Select from our professionally designed workout plans</string>
-    <string name="create_my_own_plan">Create My Own Plan</string>
-    <string name="manual_description">Build a custom workout plan tailored to your specific needs</string>
-    <string name="let_ai_generate_a_plan">Let AI Generate a Plan</string>
-    <string name="ai_description">Our AI will create a personalized plan based on your goals</string>
-    <string name="error_saving_choice">Error saving your choice. Please try again.</string>
-    <string name="success_saving_choice">Choice saved successfully!</string>
 
     <!-- Success Messages -->
-    <string name="success_reset_password">Password reset email sent successfully</string>
-    <string name="success_registration">Registration successful</string>
-    <string name="reset_password_email_sent">Password reset email sent successfully</string>
-    <string name="error_reset_password_failed">Failed to send password reset email</string>
 </resources>
