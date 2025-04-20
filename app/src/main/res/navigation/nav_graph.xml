@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph"
     app:startDestination="@id/auth_navigation">
 
     <!-- Auth feature navigation -->
@@ -17,9 +16,9 @@
     <include android:id="@+id/workout_navigation" app:graph="@navigation/workout_navigation" />
 
     <!-- Progress feature navigation -->
-    <include android:id="@+id/progress_navigation" app:graph="@navigation/progress_navigation" />
+    <include app:graph="@navigation/progress_navigation" />
 
     <!-- Profile feature navigation -->
-    <include android:id="@+id/profile_navigation" app:graph="@navigation/profile_navigation" />
+    <include app:graph="@navigation/profile_navigation" />
 
 </navigation>

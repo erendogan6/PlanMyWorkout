@@ -3,7 +3,6 @@ package com.erendogan6.planmyworkout.feature.onboarding.usecase;
 import com.erendogan6.planmyworkout.feature.onboarding.model.WorkoutPlan;
 import com.erendogan6.planmyworkout.feature.onboarding.repository.WorkoutPlanRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +46,4 @@ public class GetReadyMadePlansUseCase {
             }
         });
     }
-
-    // No mock data - we only use real data from Firestore
 }
