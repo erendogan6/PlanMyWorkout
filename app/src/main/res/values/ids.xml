@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navigation IDs -->
+    <item name="auth_navigation" type="id" />
+    <item name="onboarding_navigation" type="id" />
+    <item name="home_navigation" type="id" />
+    <item name="workout_navigation" type="id" />
+    <item name="progress_navigation" type="id" />
+    <item name="profile_navigation" type="id" />
+</resources>

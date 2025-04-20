@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/progress_navigation"
+    app:startDestination="@id/progressFragment">
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.erendogan6.planmyworkout.feature.progress.ui.ProgressFragment"
+        android:label="Progress"
+        tools:layout="@layout/fragment_progress">
+        <action
+            android:id="@+id/action_progressFragment_to_weightHistoryFragment"
+            app:destination="@id/weightHistoryFragment" />
+        <action
+            android:id="@+id/action_progressFragment_to_workoutHistoryFragment"
+            app:destination="@id/workoutHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/weightHistoryFragment"
+        android:name="com.erendogan6.planmyworkout.feature.progress.ui.WeightHistoryFragment"
+        android:label="Weight History"
+        tools:layout="@layout/fragment_weight_history">
+        <action
+            android:id="@+id/action_weightHistoryFragment_to_addWeightFragment"
+            app:destination="@id/addWeightFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workoutHistoryFragment"
+        android:name="com.erendogan6.planmyworkout.feature.progress.ui.WorkoutHistoryFragment"
+        android:label="Workout History"
+        tools:layout="@layout/fragment_workout_history">
+        <action
+            android:id="@+id/action_workoutHistoryFragment_to_workoutDetailFragment"
+            app:destination="@id/workoutDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addWeightFragment"
+        android:name="com.erendogan6.planmyworkout.feature.progress.ui.AddWeightFragment"
+        android:label="Add Weight"
+        tools:layout="@layout/fragment_add_weight">
+        <action
+            android:id="@+id/action_addWeightFragment_to_weightHistoryFragment"
+            app:destination="@id/weightHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workoutDetailFragment"
+        android:name="com.erendogan6.planmyworkout.feature.progress.ui.WorkoutDetailFragment"
+        android:label="Workout Detail"
+        tools:layout="@layout/fragment_workout_detail">
+        <argument
+            android:name="workoutId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

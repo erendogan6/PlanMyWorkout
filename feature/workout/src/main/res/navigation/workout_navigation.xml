@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/workout_navigation"
+    app:startDestination="@id/exerciseListFragment">
+
+    <fragment
+        android:id="@+id/exerciseListFragment"
+        android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseListFragment"
+        android:label="Exercise List"
+        tools:layout="@layout/fragment_exercise_list">
+        <action
+            android:id="@+id/action_exerciseListFragment_to_exerciseDetailFragment"
+            app:destination="@id/exerciseDetailFragment" />
+        <argument
+            android:name="planId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseDetailFragment"
+        android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseDetailFragment"
+        android:label="Exercise Detail"
+        tools:layout="@layout/fragment_exercise_detail">
+        <action
+            android:id="@+id/action_exerciseDetailFragment_to_exerciseLogFragment"
+            app:destination="@id/exerciseLogFragment" />
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseLogFragment"
+        android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseLogFragment"
+        android:label="Exercise Log"
+        tools:layout="@layout/fragment_exercise_log">
+        <action
+            android:id="@+id/action_exerciseLogFragment_to_exerciseListFragment"
+            app:destination="@id/exerciseListFragment" />
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

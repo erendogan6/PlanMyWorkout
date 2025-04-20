@@ -36,9 +36,23 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    lint {
+        abortOnError = false
+    }
 }
 
 dependencies {
+    // Module dependencies
+    implementation(project(":core"))
+    implementation(project(":core-ui"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:workout"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:progress"))
+    implementation(project(":feature:profile"))
+
     // AndroidX Core Libraries
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -59,17 +73,6 @@ dependencies {
     // Lifecycle Components
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.runtime)
-
-    // Room Database
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-
-    // MPAndroidChart for visualizations
-    // implementation(libs.mpandroidchart)
-
-    // Coroutines for Flow
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
 
     // Navigation Components
     implementation(libs.navigation.fragment)

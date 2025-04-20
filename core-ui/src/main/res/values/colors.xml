@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#FF212121</color>
+    <color name="primary_dark">#FF000000</color>
+    <color name="accent">#FFFF5722</color>
+    <color name="background">#FF121212</color>
+    <color name="surface">#FF1E1E1E</color>
+    <color name="on_primary">#FFFFFFFF</color>
+    <color name="on_background">#FFFFFFFF</color>
+    <color name="on_surface">#FFFFFFFF</color>
+    <color name="on_accent">#FFFFFFFF</color>
+    <color name="error">#FFB00020</color>
+    <color name="on_error">#FFFFFFFF</color>
+    <color name="card_background">#FF2D2D2D</color>
+    <color name="divider">#1FFFFFFF</color>
+    <color name="text_primary">#DEFFFFFF</color>
+    <color name="text_secondary">#99FFFFFF</color>
+    <color name="text_hint">#61FFFFFF</color>
+</resources>
