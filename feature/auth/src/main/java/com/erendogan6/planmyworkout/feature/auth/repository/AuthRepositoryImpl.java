@@ -4,11 +4,14 @@ import com.erendogan6.planmyworkout.feature.auth.model.AuthResult;
 import com.erendogan6.planmyworkout.feature.auth.model.AuthResponse;
 import com.erendogan6.planmyworkout.feature.auth.model.User;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,15 +24,18 @@ import javax.inject.Singleton;
 public class AuthRepositoryImpl implements AuthRepository {
 
     private final FirebaseAuth firebaseAuth;
+    private final FirebaseFirestore firestore;
 
     /**
      * Constructor for dependency injection.
      *
      * @param firebaseAuth Firebase Authentication instance
+     * @param firestore Firebase Firestore instance
      */
     @Inject
-    public AuthRepositoryImpl(FirebaseAuth firebaseAuth) {
+    public AuthRepositoryImpl(FirebaseAuth firebaseAuth, FirebaseFirestore firestore) {
         this.firebaseAuth = firebaseAuth;
+        this.firestore = firestore;
     }
 
     /**
@@ -161,6 +167,41 @@ public class AuthRepositoryImpl implements AuthRepository {
     public String getCurrentUserId() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         return currentUser != null ? currentUser.getUid() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Checks if the user has completed onboarding by looking for a mainPlanId in Firestore.
+     */
+    @Override
+    public Task<Boolean> hasCompletedOnboarding() {
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            return Tasks.forResult(false);
+        }
+
+        return firestore.collection("users")
+                .document(userId)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Check if the user has a mainPlanId or any plans
+                            if (document.contains("mainPlanId") && document.getString("mainPlanId") != null) {
+                                return true;
+                            }
+
+                            // Alternatively, check if the user has completed onboarding
+                            if (document.contains("onboardingCompleted")) {
+                                Boolean onboardingCompleted = document.getBoolean("onboardingCompleted");
+                                return onboardingCompleted != null && onboardingCompleted;
+                            }
+                        }
+                    }
+                    return false;
+                });
     }
 
     /**

@@ -99,7 +99,7 @@ public class PlanDetailFragment extends BaseFragment {
 
                 // Navigate to home using Navigation Component
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_planDetailFragment_to_home_navigation);
+                        .navigate(R.id.action_planDetailFragment_to_bottom_nav_graph);
             }
         });
 

@@ -6,6 +6,7 @@ import com.erendogan6.planmyworkout.feature.auth.repository.AuthRepository;
 import com.erendogan6.planmyworkout.feature.auth.repository.AuthRepositoryImpl;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Singleton;
 
@@ -38,6 +39,8 @@ public class AuthModule {
         return FirebaseAuth.getInstance();
     }
 
+    // FirebaseFirestore is provided by CoreModule
+
     /**
      * Provides AuthRepository implementation.
      *
@@ -46,7 +49,7 @@ public class AuthModule {
      */
     @Provides
     @Singleton
-    public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth) {
-        return new AuthRepositoryImpl(firebaseAuth);
+    public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth, FirebaseFirestore firestore) {
+        return new AuthRepositoryImpl(firebaseAuth, firestore);
     }
 }
