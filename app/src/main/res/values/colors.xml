@@ -18,4 +18,5 @@
     <color name="text_secondary_light">#B3FFFFFF</color>
     <color name="button_background">#FF5722</color>
     <color name="accent_light">#FF8A65</color>
+    <color name="card_stroke">#33FFFFFF</color>
 </resources>

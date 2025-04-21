@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -48,16 +50,34 @@ public class ExerciseDetailFragment extends Fragment {
             navController.popBackStack();
         });
 
-        // Get exercise ID and plan ID from arguments
+        // Get arguments
         if (getArguments() != null) {
             ExerciseDetailFragmentArgs args = ExerciseDetailFragmentArgs.fromBundle(getArguments());
             String exerciseId = args.getExerciseId();
             String planId = args.getPlanId();
+            boolean isEdit = args.getIsEdit();
+            String logId = args.getLogId();
+            float weight = args.getWeight();
+            int reps = args.getReps();
+            String notes = args.getNotes();
 
             if (!exerciseId.isEmpty() && !planId.isEmpty()) {
-                // Load exercise details and latest log
+                // Load exercise details
                 viewModel.loadExerciseDetails();
-                viewModel.loadLatestLog();
+
+                // If in edit mode, pre-fill the form with the log data
+                if (isEdit && !logId.isEmpty()) {
+                    viewModel.setEditMode(true, logId);
+                    binding.tvTitle.setText("Edit Log");
+                    binding.etWeight.setText(String.format(Locale.getDefault(), "%.1f", weight));
+                    binding.etReps.setText(String.valueOf(reps));
+                    binding.etNotes.setText(notes);
+                    binding.layoutLastTry.setVisibility(View.GONE);
+                } else {
+                    // In create mode, load the latest log for reference
+                    viewModel.loadLatestLog();
+                    binding.tvTitle.setText("Add New Log");
+                }
             }
         }
 
@@ -157,8 +177,12 @@ public class ExerciseDetailFragment extends Fragment {
             double weight = Double.parseDouble(weightStr);
             int reps = Integer.parseInt(repsStr);
 
-            // Save the exercise log
-            viewModel.saveExerciseLog(weight, reps, notes);
+            // Save or update the exercise log based on mode
+            if (viewModel.isInEditMode()) {
+                viewModel.updateExerciseLog(weight, reps, notes);
+            } else {
+                viewModel.saveExerciseLog(weight, reps, notes);
+            }
         } catch (NumberFormatException e) {
             Toast.makeText(requireContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
         }

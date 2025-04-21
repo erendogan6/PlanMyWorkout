@@ -125,12 +125,12 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
             return;
         }
 
-        // Navigate to exercise detail screen
+        // Navigate to exercise history screen
         Toast.makeText(requireContext(), "Selected: " + exercise.getName(), Toast.LENGTH_SHORT).show();
 
-        // Navigate to exercise detail with both exerciseId and planId
-        ExerciseListFragmentDirections.ActionExerciseListFragmentToExerciseDetailFragment action =
-                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseDetailFragment(exercise.getId(), planId);
+        // Navigate to exercise history with both exerciseId and planId
+        ExerciseListFragmentDirections.ActionExerciseListFragmentToExerciseHistoryFragment action =
+                ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseHistoryFragment(exercise.getId(), planId);
         Navigation.findNavController(requireView()).navigate(action);
     }
 

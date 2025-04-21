@@ -11,8 +11,24 @@
         android:label="Exercise List"
         tools:layout="@layout/fragment_exercise_list">
         <action
-            android:id="@+id/action_exerciseListFragment_to_exerciseDetailFragment"
+            android:id="@+id/action_exerciseListFragment_to_exerciseHistoryFragment"
+            app:destination="@id/exerciseHistoryFragment" />
+        <argument
+            android:name="planId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseHistoryFragment"
+        android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseHistoryFragment"
+        android:label="Exercise History"
+        tools:layout="@layout/fragment_exercise_history">
+        <action
+            android:id="@+id/action_exerciseHistoryFragment_to_exerciseDetailFragment"
             app:destination="@id/exerciseDetailFragment" />
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
         <argument
             android:name="planId"
             app:argType="string" />
@@ -23,28 +39,32 @@
         android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseDetailFragment"
         android:label="Exercise Detail"
         tools:layout="@layout/fragment_exercise_detail">
-        <action
-            android:id="@+id/action_exerciseDetailFragment_to_exerciseLogFragment"
-            app:destination="@id/exerciseLogFragment" />
         <argument
             android:name="exerciseId"
             app:argType="string" />
         <argument
             android:name="planId"
             app:argType="string" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/exerciseLogFragment"
-        android:name="com.erendogan6.planmyworkout.feature.workout.ui.ExerciseLogFragment"
-        android:label="Exercise Log"
-        tools:layout="@layout/fragment_exercise_log">
-        <action
-            android:id="@+id/action_exerciseLogFragment_to_exerciseListFragment"
-            app:destination="@id/exerciseListFragment" />
         <argument
-            android:name="exerciseId"
-            app:argType="string" />
+            android:name="isEdit"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="logId"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="weight"
+            app:argType="float"
+            android:defaultValue="0.0" />
+        <argument
+            android:name="reps"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="notes"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
 </navigation>

@@ -289,6 +289,53 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
     }
 
     /**
+     * Get all exercise logs for a specific exercise in a plan.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @return Task with the list of exercise logs
+     */
+    @Override
+    public Task<List<ExerciseLog>> getExerciseLogs(String planId, String exerciseId) {
+        String userId = firestoreManager.getCurrentUserId();
+        if (userId == null) {
+            return Tasks.forException(new IllegalStateException("User not logged in"));
+        }
+
+        return firestore.collection("users")
+                .document(userId)
+                .collection("plans")
+                .document(planId)
+                .collection("exercises")
+                .document(exerciseId)
+                .collection("logs")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .continueWith(task -> {
+                    List<ExerciseLog> logs = new ArrayList<>();
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            String logId = document.getId();
+                            Double weight = document.getDouble("weight");
+                            Long reps = document.getLong("reps");
+                            String notes = document.getString("notes");
+                            Date timestamp = document.getDate("timestamp");
+
+                            logs.add(new ExerciseLog(
+                                    logId,
+                                    weight != null ? weight : 0,
+                                    reps != null ? reps.intValue() : 0,
+                                    notes,
+                                    timestamp
+                            ));
+                        }
+                    }
+                    return logs;
+                });
+    }
+
+    /**
      * Save a new exercise log for a specific exercise in a plan.
      *
      * @param planId The plan ID
@@ -298,6 +345,7 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
      * @param notes Optional notes about the exercise
      * @return Task indicating success or failure
      */
+    @Override
     public Task<Void> saveExerciseLog(String planId, String exerciseId, double weight, int reps, String notes) {
         String userId = firestoreManager.getCurrentUserId();
         if (userId == null) {
@@ -315,7 +363,7 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
                 .collection("logs")
                 .document(timestamp);
 
-        // Create the log repository
+        // Create the log data
         Map<String, Object> logData = new HashMap<>();
         logData.put("weight", weight);
         logData.put("reps", reps);
@@ -324,6 +372,44 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
 
         // Save the log to Firestore
         return logRef.set(logData);
+    }
+
+    /**
+     * Update an existing exercise log.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @param logId The log ID
+     * @param weight The weight used
+     * @param reps The number of reps completed
+     * @param notes Optional notes about the exercise
+     * @return Task indicating success or failure
+     */
+    @Override
+    public Task<Void> updateExerciseLog(String planId, String exerciseId, String logId, double weight, int reps, String notes) {
+        String userId = firestoreManager.getCurrentUserId();
+        if (userId == null) {
+            return Tasks.forException(new IllegalStateException("User not logged in"));
+        }
+
+        DocumentReference logRef = firestore.collection("users")
+                .document(userId)
+                .collection("plans")
+                .document(planId)
+                .collection("exercises")
+                .document(exerciseId)
+                .collection("logs")
+                .document(logId);
+
+        // Create the updated log data
+        Map<String, Object> logData = new HashMap<>();
+        logData.put("weight", weight);
+        logData.put("reps", reps);
+        logData.put("notes", notes);
+        // Don't update the timestamp for edits
+
+        // Update the log in Firestore
+        return logRef.update(logData);
     }
 
 
