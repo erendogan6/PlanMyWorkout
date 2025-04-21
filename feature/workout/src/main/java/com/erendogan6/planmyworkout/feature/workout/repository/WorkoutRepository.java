@@ -47,6 +47,15 @@ public interface WorkoutRepository {
     Task<ExerciseLog> getLatestExerciseLog(String planId, String exerciseId);
 
     /**
+     * Get all exercise logs for a specific exercise in a plan.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @return Task with the list of exercise logs
+     */
+    Task<List<ExerciseLog>> getExerciseLogs(String planId, String exerciseId);
+
+    /**
      * Save a new exercise log for a specific exercise in a plan.
      *
      * @param planId The plan ID
@@ -57,4 +66,17 @@ public interface WorkoutRepository {
      * @return Task indicating success or failure
      */
     Task<Void> saveExerciseLog(String planId, String exerciseId, double weight, int reps, String notes);
+
+    /**
+     * Update an existing exercise log.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @param logId The log ID
+     * @param weight The weight used
+     * @param reps The number of reps completed
+     * @param notes Optional notes about the exercise
+     * @return Task indicating success or failure
+     */
+    Task<Void> updateExerciseLog(String planId, String exerciseId, String logId, double weight, int reps, String notes);
 }

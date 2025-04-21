@@ -10,6 +10,7 @@ import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetLatestExerciseLogUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.SaveExerciseLogUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.UpdateExerciseLogUseCase;
 
 import javax.inject.Inject;
 
@@ -32,15 +33,23 @@ public class ExerciseDetailViewModel extends ViewModel {
     private final MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
+    // Edit mode fields
+    private boolean editMode = false;
+    private String logId = "";
+
+    private final UpdateExerciseLogUseCase updateExerciseLogUseCase;
+
     @Inject
     public ExerciseDetailViewModel(
             GetExerciseUseCase getExerciseUseCase,
             GetLatestExerciseLogUseCase getLatestExerciseLogUseCase,
             SaveExerciseLogUseCase saveExerciseLogUseCase,
+            UpdateExerciseLogUseCase updateExerciseLogUseCase,
             SavedStateHandle savedStateHandle) {
         this.getExerciseUseCase = getExerciseUseCase;
         this.getLatestExerciseLogUseCase = getLatestExerciseLogUseCase;
         this.saveExerciseLogUseCase = saveExerciseLogUseCase;
+        this.updateExerciseLogUseCase = updateExerciseLogUseCase;
         this.savedStateHandle = savedStateHandle;
     }
 
@@ -66,6 +75,21 @@ public class ExerciseDetailViewModel extends ViewModel {
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * Set the edit mode and log ID.
+     */
+    public void setEditMode(boolean editMode, String logId) {
+        this.editMode = editMode;
+        this.logId = logId;
+    }
+
+    /**
+     * Check if the ViewModel is in edit mode.
+     */
+    public boolean isInEditMode() {
+        return editMode;
     }
 
     /**
@@ -108,7 +132,7 @@ public class ExerciseDetailViewModel extends ViewModel {
     }
 
     /**
-     * Save the exercise log to Firestore.
+     * Save a new exercise log to Firestore.
      */
     public void saveExerciseLog(double weight, int reps, String notes) {
         String exerciseId = savedStateHandle.get("exerciseId");
@@ -143,6 +167,49 @@ public class ExerciseDetailViewModel extends ViewModel {
                 })
                 .addOnFailureListener(e -> {
                     errorMessage.setValue("Failed to save log: " + e.getMessage());
+                    isSaving.setValue(false);
+                });
+    }
+
+    /**
+     * Update an existing exercise log in Firestore.
+     */
+    public void updateExerciseLog(double weight, int reps, String notes) {
+        String exerciseId = savedStateHandle.get("exerciseId");
+        String planId = savedStateHandle.get("planId");
+
+        if (exerciseId == null || planId == null) {
+            errorMessage.setValue("Exercise ID or Plan ID not found");
+            return;
+        }
+
+        if (!editMode || logId.isEmpty()) {
+            errorMessage.setValue("Not in edit mode or missing log ID");
+            return;
+        }
+
+        // Validate inputs
+        if (weight <= 0) {
+            errorMessage.setValue("Please enter a valid weight");
+            return;
+        }
+
+        if (reps <= 0) {
+            errorMessage.setValue("Please enter a valid number of reps");
+            return;
+        }
+
+        // Show loading state
+        isSaving.setValue(true);
+
+        // Update in Firestore
+        updateExerciseLogUseCase.execute(planId, exerciseId, logId, weight, reps, notes)
+                .addOnSuccessListener(aVoid -> {
+                    saveSuccess.setValue(true);
+                    isSaving.setValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.setValue("Failed to update log: " + e.getMessage());
                     isSaving.setValue(false);
                 });
     }
