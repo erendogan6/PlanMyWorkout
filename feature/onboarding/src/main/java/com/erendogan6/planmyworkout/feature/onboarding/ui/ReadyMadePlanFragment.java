@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,14 +47,14 @@ public class ReadyMadePlanFragment extends BaseFragment implements WorkoutPlanAd
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(ReadyMadePlansViewModel.class);
 
-        // Load workout plans
-        viewModel.loadWorkoutPlans();
+        // Set up the RecyclerView
+        setupRecyclerView();
 
         // Observe ViewModel
         observeViewModel();
 
-        // Set up the RecyclerView
-        setupRecyclerView();
+        // Load workout plans
+        viewModel.loadWorkoutPlans();
     }
 
     private void setupRecyclerView() {
@@ -77,8 +78,7 @@ public class ReadyMadePlanFragment extends BaseFragment implements WorkoutPlanAd
                     showLoading();
                     binding.recyclerViewPlans.setVisibility(View.GONE);
                 } else {
-                    binding.recyclerViewPlans.setVisibility(View.VISIBLE);
-                    hideLoading();
+                    updateUIAfterLoading();
                 }
             }
         });
@@ -96,6 +96,24 @@ public class ReadyMadePlanFragment extends BaseFragment implements WorkoutPlanAd
             if (binding != null && errorMessage != null && !errorMessage.isEmpty()) {
                 // Show a toast with the error message
                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void updateUIAfterLoading() {
+        binding.recyclerViewPlans.setVisibility(View.VISIBLE);
+
+        binding.recyclerViewPlans.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                binding.recyclerViewPlans.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                if (adapter != null && adapter.getItemCount() > 0) {
+                    hideLoading();
+                } else if (viewModel.getIsEmpty().getValue() == Boolean.TRUE) {
+                    hideLoading();
+                }
+                return true;
             }
         });
     }

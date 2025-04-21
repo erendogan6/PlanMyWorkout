@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Exercise Detail Screen -->
+    <string name="add_new_log">Add New Log</string>
+    <string name="last_try">Last Try</string>
+    <string name="no_previous_attempts">No previous attempts</string>
+    <string name="notes_will_appear_here">Notes will appear here</string>
+    <string name="weight_kg">Weight (kg)</string>
+    <string name="zero_decimal">0.0</string>
+    <string name="reps">Reps</string>
+    <string name="zero">0</string>
+    <string name="notes">Notes</string>
+    <string name="add_notes_about_workout">Add notes about your workout…</string>
+    <string name="save">SAVE</string>
+
+    <!-- Exercise List Screen -->
+    <string name="no_exercises_available">No exercises available</string>
+
+    <!-- Exercise History Screen -->
+    <string name="workout_history">WORKOUT HISTORY</string>
+    <string name="your_progress">Your Progress</string>
+    <string name="track_performance">Track your performance over time</string>
+    <string name="no_logs_available">No logs available</string>
+    <string name="no_workout_logs_yet">No workout logs yet.\nTap the + button to add your first log.</string>
+    <string name="add_log">Add Log</string>
+</resources>

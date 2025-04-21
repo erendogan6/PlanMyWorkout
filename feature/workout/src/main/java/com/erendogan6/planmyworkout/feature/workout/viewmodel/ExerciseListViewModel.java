@@ -47,7 +47,6 @@ public class ExerciseListViewModel extends ViewModel {
         }
 
         isLoading.setValue(true);
-        exercises.setValue(new ArrayList<>()); // Clear existing exercises
 
         // Load the workout plan from Firestore
         getWorkoutPlanUseCase.execute(planId)
@@ -68,11 +67,13 @@ public class ExerciseListViewModel extends ViewModel {
                                 });
                     } else {
                         errorMessage.setValue("Workout plan not found");
+                        exercises.setValue(new ArrayList<>());
                         isLoading.setValue(false);
                     }
                 })
                 .addOnFailureListener(e -> {
                     errorMessage.setValue("Failed to load workout plan: " + e.getMessage());
+                    exercises.setValue(new ArrayList<>());
                     isLoading.setValue(false);
                 });
     }
