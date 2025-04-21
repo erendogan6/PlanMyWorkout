@@ -8,10 +8,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.onboarding.R;
 import com.erendogan6.planmyworkout.feature.onboarding.adapter.ExerciseAdapter;
@@ -28,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for displaying workout plan details.
  */
 @AndroidEntryPoint
-public class PlanDetailFragment extends Fragment {
+public class PlanDetailFragment extends BaseFragment {
 
     private FragmentPlanDetailImprovedBinding binding;
     private PlanDetailViewModel viewModel;
@@ -79,9 +80,15 @@ public class PlanDetailFragment extends Fragment {
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
-            binding.btnStartPlan.setEnabled(!isLoading);
-            binding.cardExercises.setAlpha(Boolean.TRUE.equals(isLoading) ? 0.5f : 1.0f);
+            if (Boolean.TRUE.equals(isLoading)) {
+                showLoading();
+                binding.btnStartPlan.setEnabled(false);
+                binding.cardExercises.setAlpha(0.5f);
+            } else {
+                hideLoading();
+                binding.btnStartPlan.setEnabled(true);
+                binding.cardExercises.setAlpha(1.0f);
+            }
         });
 
         // Observe save plan success

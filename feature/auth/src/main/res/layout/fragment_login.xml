@@ -120,15 +120,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/btnLogin"
-        app:layout_constraintEnd_toEndOf="@id/btnLogin"
-        app:layout_constraintStart_toStartOf="@id/btnLogin"
-        app:layout_constraintTop_toTopOf="@id/btnLogin" />
+    <!-- ProgressBar removed in favor of the global loading animation -->
 
     <TextView
         android:id="@+id/tvNoAccount"

@@ -8,11 +8,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseLogAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseHistoryBinding;
@@ -27,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for displaying the history of logs for a specific exercise.
  */
 @AndroidEntryPoint
-public class ExerciseHistoryFragment extends Fragment implements ExerciseLogAdapter.OnLogSelectedListener {
+public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLogAdapter.OnLogSelectedListener {
 
     private FragmentExerciseHistoryBinding binding;
     private ExerciseHistoryViewModel viewModel;
@@ -100,8 +101,13 @@ public class ExerciseHistoryFragment extends Fragment implements ExerciseLogAdap
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            binding.rvLogs.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            if (isLoading) {
+                showLoading();
+                binding.rvLogs.setVisibility(View.GONE);
+            } else {
+                hideLoading();
+                binding.rvLogs.setVisibility(View.VISIBLE);
+            }
         });
 
         // Observe error message

@@ -8,9 +8,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.auth.R;
 import com.erendogan6.planmyworkout.feature.auth.databinding.FragmentRegisterBinding;
@@ -22,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for user registration.
  */
 @AndroidEntryPoint
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends BaseFragment {
 
     private FragmentRegisterBinding binding;
     private RegisterViewModel viewModel;
@@ -56,10 +57,10 @@ public class RegisterFragment extends Fragment {
             if (result.isLoading()) {
                 // Show loading state
                 binding.btnRegister.setEnabled(false);
-                binding.progressBar.setVisibility(View.VISIBLE);
+                showLoading();
             } else {
                 binding.btnRegister.setEnabled(true);
-                binding.progressBar.setVisibility(View.GONE);
+                hideLoading();
 
                 if (result.isSuccess()) {
                     // Navigate to onboarding screen
