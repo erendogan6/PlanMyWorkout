@@ -11,10 +11,11 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseDetailBinding;
 import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseDetailViewModel;
@@ -25,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for logging workout repository for a specific exercise.
  */
 @AndroidEntryPoint
-public class ExerciseDetailFragment extends Fragment {
+public class ExerciseDetailFragment extends BaseFragment {
 
     private FragmentExerciseDetailBinding binding;
     private ExerciseDetailViewModel viewModel;
@@ -126,15 +127,29 @@ public class ExerciseDetailFragment extends Fragment {
         });
 
         // Observe loading state
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE));
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                showLoading();
+            } else {
+                hideLoading();
+            }
+        });
 
         // Observe saving state
         viewModel.getIsSaving().observe(getViewLifecycleOwner(), isSaving -> {
-            binding.progressBarSave.setVisibility(Boolean.TRUE.equals(isSaving) ? View.VISIBLE : View.GONE);
-            binding.btnSave.setEnabled(!isSaving);
-            binding.etWeight.setEnabled(!isSaving);
-            binding.etReps.setEnabled(!isSaving);
-            binding.etNotes.setEnabled(!isSaving);
+            if (Boolean.TRUE.equals(isSaving)) {
+                showLoading();
+                binding.btnSave.setEnabled(false);
+                binding.etWeight.setEnabled(false);
+                binding.etReps.setEnabled(false);
+                binding.etNotes.setEnabled(false);
+            } else {
+                hideLoading();
+                binding.btnSave.setEnabled(true);
+                binding.etWeight.setEnabled(true);
+                binding.etReps.setEnabled(true);
+                binding.etNotes.setEnabled(true);
+            }
         });
 
         // Observe save success

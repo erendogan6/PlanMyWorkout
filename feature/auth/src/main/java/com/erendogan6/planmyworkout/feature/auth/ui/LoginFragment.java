@@ -8,9 +8,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.auth.R;
 import com.erendogan6.planmyworkout.feature.auth.databinding.FragmentLoginBinding;
@@ -22,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Login screen fragment.
  */
 @AndroidEntryPoint
-public class LoginFragment extends Fragment {
+public class LoginFragment extends BaseFragment {
 
     private FragmentLoginBinding binding;
     private LoginViewModel viewModel;
@@ -59,10 +60,10 @@ public class LoginFragment extends Fragment {
             if (result.isLoading()) {
                 // Show loading state
                 binding.btnLogin.setEnabled(false);
-                binding.progressBar.setVisibility(View.VISIBLE);
+                showLoading();
             } else {
                 binding.btnLogin.setEnabled(true);
-                binding.progressBar.setVisibility(View.GONE);
+                hideLoading();
 
                 if (result.isSuccess()) {
                     // Navigate to onboarding or home screen
@@ -86,7 +87,7 @@ public class LoginFragment extends Fragment {
         }
 
         // Show loading state
-        binding.progressBar.setVisibility(View.VISIBLE);
+        showLoading();
         binding.btnLogin.setEnabled(false);
 
         viewModel.login(email, password);

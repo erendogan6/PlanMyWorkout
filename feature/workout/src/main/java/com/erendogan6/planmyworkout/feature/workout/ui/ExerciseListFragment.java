@@ -8,11 +8,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseListAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseListBinding;
@@ -27,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for displaying a list of exercises in a workout plan.
  */
 @AndroidEntryPoint
-public class ExerciseListFragment extends Fragment implements ExerciseListAdapter.OnExerciseSelectedListener {
+public class ExerciseListFragment extends BaseFragment implements ExerciseListAdapter.OnExerciseSelectedListener {
 
     private FragmentExerciseListBinding binding;
     private ExerciseListViewModel viewModel;
@@ -95,8 +96,13 @@ public class ExerciseListFragment extends Fragment implements ExerciseListAdapte
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
-            binding.rvExercises.setVisibility(Boolean.TRUE.equals(isLoading) ? View.GONE : View.VISIBLE);
+            if (Boolean.TRUE.equals(isLoading)) {
+                showLoading();
+                binding.rvExercises.setVisibility(View.GONE);
+            } else {
+                hideLoading();
+                binding.rvExercises.setVisibility(View.VISIBLE);
+            }
         });
 
         // Observe error messages

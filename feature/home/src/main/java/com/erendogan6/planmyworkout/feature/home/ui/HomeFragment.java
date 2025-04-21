@@ -9,9 +9,10 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.home.R;
 import com.erendogan6.planmyworkout.feature.home.databinding.FragmentHomeBinding;
@@ -23,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Home screen fragment.
  */
 @AndroidEntryPoint
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
 
     private FragmentHomeBinding binding;
     private HomeViewModel viewModel;
@@ -82,6 +83,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void observeViewModel() {
+        // Observe loading state
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (Boolean.TRUE.equals(isLoading)) {
+                showLoading();
+            } else {
+                hideLoading();
+            }
+        });
+
         viewModel.getUserName().observe(getViewLifecycleOwner(), name -> {
             if (name != null && !name.isEmpty()) {
                 binding.tvMotivationalMessage.setText("Keep pushing, " + name + "! You're doing great!");

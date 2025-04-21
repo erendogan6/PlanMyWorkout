@@ -16,32 +16,47 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class HomeViewModel extends ViewModel {
-    
+
     private final HomeRepository homeRepository;
     private final MutableLiveData<String> userName = new MutableLiveData<>();
     private final MutableLiveData<WorkoutPlan> currentPlan = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private String currentPlanId;
-    
+
     @Inject
     public HomeViewModel(HomeRepository homeRepository) {
         this.homeRepository = homeRepository;
         loadUserData();
         loadCurrentPlan();
     }
-    
+
     private void loadUserData() {
-        homeRepository.getUserName().addOnSuccessListener(userName::setValue);
+        isLoading.setValue(true);
+        homeRepository.getUserName().addOnSuccessListener(name -> {
+            userName.setValue(name);
+            // Don't hide loading here as we're still loading the plan
+        });
     }
-    
+
     private void loadCurrentPlan() {
+        isLoading.setValue(true);
         homeRepository.getCurrentPlanId().addOnSuccessListener(planId -> {
             if (planId != null && !planId.isEmpty()) {
                 currentPlanId = planId;
-                homeRepository.getWorkoutPlan(planId).addOnSuccessListener(currentPlan::setValue);
+                homeRepository.getWorkoutPlan(planId).addOnSuccessListener(plan -> {
+                    currentPlan.setValue(plan);
+                    isLoading.setValue(false);
+                }).addOnFailureListener(e -> {
+                    isLoading.setValue(false);
+                });
+            } else {
+                isLoading.setValue(false);
             }
+        }).addOnFailureListener(e -> {
+            isLoading.setValue(false);
         });
     }
-    
+
     /**
      * Get the user's name LiveData.
      *
@@ -50,7 +65,7 @@ public class HomeViewModel extends ViewModel {
     public LiveData<String> getUserName() {
         return userName;
     }
-    
+
     /**
      * Get the current workout plan LiveData.
      *
@@ -59,7 +74,7 @@ public class HomeViewModel extends ViewModel {
     public LiveData<WorkoutPlan> getCurrentPlan() {
         return currentPlan;
     }
-    
+
     /**
      * Get the current plan ID.
      *
@@ -67,5 +82,14 @@ public class HomeViewModel extends ViewModel {
      */
     public String getCurrentPlanId() {
         return currentPlanId;
+    }
+
+    /**
+     * Get the loading state LiveData.
+     *
+     * @return LiveData with the loading state
+     */
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 }

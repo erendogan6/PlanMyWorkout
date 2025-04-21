@@ -8,10 +8,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.onboarding.adapter.WorkoutPlanAdapter;
 import com.erendogan6.planmyworkout.feature.onboarding.databinding.FragmentReadyMadePlanListBinding;
@@ -25,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * This fragment shows a list of predefined workout plans that users can select.
  */
 @AndroidEntryPoint
-public class ReadyMadePlanFragment extends Fragment implements WorkoutPlanAdapter.OnPlanSelectedListener {
+public class ReadyMadePlanFragment extends BaseFragment implements WorkoutPlanAdapter.OnPlanSelectedListener {
 
     private FragmentReadyMadePlanListBinding binding;
     private WorkoutPlanAdapter adapter;
@@ -45,22 +46,14 @@ public class ReadyMadePlanFragment extends Fragment implements WorkoutPlanAdapte
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(ReadyMadePlansViewModel.class);
 
-        // Set up the toolbar
-        setupToolbar();
-
-        // Set up the RecyclerView
-        setupRecyclerView();
+        // Load workout plans
+        viewModel.loadWorkoutPlans();
 
         // Observe ViewModel
         observeViewModel();
 
-        // Load workout plans
-        viewModel.loadWorkoutPlans();
-    }
-
-    private void setupToolbar() {
-        // We don't need to set up the toolbar here as it's handled by the MainActivity
-        // The navigation is handled by the NavController
+        // Set up the RecyclerView
+        setupRecyclerView();
     }
 
     private void setupRecyclerView() {
@@ -80,8 +73,13 @@ public class ReadyMadePlanFragment extends Fragment implements WorkoutPlanAdapte
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (binding != null) {
-                binding.progressBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE);
-                binding.recyclerViewPlans.setVisibility(Boolean.TRUE.equals(isLoading) ? View.GONE : View.VISIBLE);
+                if (Boolean.TRUE.equals(isLoading)) {
+                    showLoading();
+                    binding.recyclerViewPlans.setVisibility(View.GONE);
+                } else {
+                    binding.recyclerViewPlans.setVisibility(View.VISIBLE);
+                    hideLoading();
+                }
             }
         });
 

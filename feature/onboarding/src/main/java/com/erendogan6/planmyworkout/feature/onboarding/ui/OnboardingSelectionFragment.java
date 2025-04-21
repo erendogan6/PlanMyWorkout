@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 
 import com.erendogan6.planmyworkout.feature.onboarding.R;
 import com.erendogan6.planmyworkout.feature.onboarding.databinding.FragmentOnboardingSelectionBinding;
@@ -19,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for selecting the onboarding path.
  */
 @AndroidEntryPoint
-public class OnboardingSelectionFragment extends Fragment {
+public class OnboardingSelectionFragment extends BaseFragment {
 
     private FragmentOnboardingSelectionBinding binding;
 

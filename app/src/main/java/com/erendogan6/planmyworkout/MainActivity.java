@@ -2,9 +2,10 @@ package com.erendogan6.planmyworkout;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.erendogan6.planmyworkout.coreui.base.BaseActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -13,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * This activity hosts the navigation components and bottom navigation.
  */
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private NavController navController;
 
     @Override
