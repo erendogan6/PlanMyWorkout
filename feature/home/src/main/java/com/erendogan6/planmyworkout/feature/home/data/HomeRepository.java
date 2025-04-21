@@ -114,7 +114,7 @@ public class HomeRepository {
                             plan.setDifficulty(document.getString("difficulty"));
 
                             // Get days per week and duration
-                            Long daysPerWeek = document.getLong("daysPerWeek");
+                            Long daysPerWeek = document.getLong("days");
                             if (daysPerWeek != null) {
                                 plan.setDaysPerWeek(daysPerWeek.intValue());
                             }
