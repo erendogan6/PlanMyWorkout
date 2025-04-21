@@ -54,17 +54,4 @@
             app:destination="@id/planDetailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/planDetailFragment"
-        android:name="com.erendogan6.planmyworkout.feature.home.ui.PlanDetailFragment"
-        android:label="Plan Detail"
-        tools:layout="@layout/fragment_plan_detail">
-        <action
-            android:id="@+id/action_planDetailFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-        <argument
-            android:name="planId"
-            app:argType="string" />
-    </fragment>
-
 </navigation>

@@ -89,8 +89,6 @@ public class ExerciseListFragment extends BaseFragment implements ExerciseListAd
             if (exercises != null) {
                 adapter.updateExercises(exercises);
                 updateEmptyState(exercises.isEmpty());
-            } else {
-                updateEmptyState(true);
             }
         });
 

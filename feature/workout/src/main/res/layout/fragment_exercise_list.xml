@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Workout Plan"
+            android:text=""
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
         android:gravity="center"
-        android:text="No exercises available"
+        android:text="@string/no_exercises_available"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="gone"

@@ -23,7 +23,7 @@ public class ReadyMadePlansViewModel extends ViewModel {
     private final GetReadyMadePlansUseCase getReadyMadePlansUseCase;
 
     final MutableLiveData<List<WorkoutPlan>> workoutPlans = new MutableLiveData<>();
-    final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
     final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
     final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
