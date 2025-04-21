@@ -26,7 +26,7 @@ public class LoadingManager implements LifecycleEventObserver {
 
     private static final String TAG_LOADING_OVERLAY = "loading_overlay";
     private static final long MINIMUM_LOADING_DURATION_MS = 500;
-    private static final long LOADING_DELAY_MS = 30;
+    private static final long LOADING_DELAY_MS = 100;
     private static final long LOADING_TIMEOUT_MS = 20000; // 20 seconds timeout
 
     private static volatile LoadingManager instance;

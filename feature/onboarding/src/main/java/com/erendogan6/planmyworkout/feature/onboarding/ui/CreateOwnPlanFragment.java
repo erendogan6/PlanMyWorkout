@@ -21,22 +21,22 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class CreateOwnPlanFragment extends Fragment {
-    
+
     private FragmentCreateOwnPlanBinding binding;
-    
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCreateOwnPlanBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
-    
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         setupListeners();
     }
-    
+
     private void setupListeners() {
         binding.btnCreatePlan.setOnClickListener(v -> {
             // Validate inputs
@@ -44,16 +44,16 @@ public class CreateOwnPlanFragment extends Fragment {
                 Toast.makeText(requireContext(), "Please enter a plan name", Toast.LENGTH_SHORT).show();
                 return;
             }
-            
+
             // In a real implementation, this would save the plan to a repository
             Toast.makeText(requireContext(), "Plan created successfully!", Toast.LENGTH_SHORT).show();
-            
+
             // Navigate to home
             Navigation.findNavController(requireView())
-                    .navigate(R.id.action_createOwnPlanFragment_to_home_navigation);
+                    .navigate(R.id.action_createOwnPlanFragment_to_bottom_nav_graph);
         });
     }
-    
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

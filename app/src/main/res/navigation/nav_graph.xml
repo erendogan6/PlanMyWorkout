@@ -10,16 +10,7 @@
     <!-- Onboarding feature navigation -->
     <include android:id="@+id/onboarding_navigation" app:graph="@navigation/onboarding_navigation" />
 
-    <!-- Home feature navigation -->
-    <include android:id="@+id/home_navigation" app:graph="@navigation/home_navigation" />
-
-    <!-- Workout feature navigation -->
-    <include android:id="@+id/workout_navigation" app:graph="@navigation/workout_navigation" />
-
-    <!-- Progress feature navigation -->
-    <include android:id="@+id/progress_navigation" app:graph="@navigation/progress_navigation" />
-
-    <!-- Profile feature navigation -->
-    <include android:id="@+id/profile_navigation" app:graph="@navigation/profile_navigation" />
+    <!-- Bottom Navigation Graph -->
+    <include android:id="@+id/bottom_nav_graph" app:graph="@navigation/bottom_nav_graph" />
 
 </navigation>

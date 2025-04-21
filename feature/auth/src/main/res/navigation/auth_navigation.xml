@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_loginFragment_to_onboarding_navigation"
             app:destination="@+id/onboarding_navigation" />
+        <action
+            android:id="@+id/action_loginFragment_to_bottom_nav_graph"
+            app:destination="@+id/bottom_nav_graph" />
     </fragment>
 
     <fragment
@@ -32,6 +35,9 @@
         <action
             android:id="@+id/action_registerFragment_to_onboarding_navigation"
             app:destination="@id/onboarding_navigation" />
+        <action
+            android:id="@+id/action_registerFragment_to_bottom_nav_graph"
+            app:destination="@id/bottom_nav_graph" />
     </fragment>
 
     <fragment

@@ -56,6 +56,7 @@ public class LoginFragment extends BaseFragment {
     }
 
     private void observeViewModel() {
+        // Observe login result
         viewModel.getLoginResult().observe(getViewLifecycleOwner(), result -> {
             if (result.isLoading()) {
                 // Show loading state
@@ -66,12 +67,26 @@ public class LoginFragment extends BaseFragment {
                 hideLoading();
 
                 if (result.isSuccess()) {
-                    // Navigate to onboarding or home screen
-                    Navigation.findNavController(requireView())
-                            .navigate(R.id.action_loginFragment_to_onboarding_navigation);
+                    // Login successful, but don't navigate yet
+                    // Navigation will be handled by onboardingCompleted observer
                 } else if (result.isError()) {
                     // Show error message
                     Toast.makeText(requireContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Observe onboarding completion status
+        viewModel.getOnboardingCompleted().observe(getViewLifecycleOwner(), completed -> {
+            if (completed != null) {
+                if (completed) {
+                    // User has completed onboarding, navigate to home screen
+                    Navigation.findNavController(requireView())
+                            .navigate(R.id.action_loginFragment_to_bottom_nav_graph);
+                } else {
+                    // User has not completed onboarding, navigate to onboarding
+                    Navigation.findNavController(requireView())
+                            .navigate(R.id.action_loginFragment_to_onboarding_navigation);
                 }
             }
         });

@@ -63,7 +63,7 @@ public class RegisterFragment extends BaseFragment {
                 hideLoading();
 
                 if (result.isSuccess()) {
-                    // Navigate to onboarding screen
+                    // After registration, always navigate to onboarding
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_registerFragment_to_onboarding_navigation);
                 } else if (result.isError()) {

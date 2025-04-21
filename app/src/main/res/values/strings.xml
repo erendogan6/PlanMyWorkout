@@ -11,6 +11,18 @@
     <string name="sign_up">Sign Up</string>
 
     <!-- Register Screen -->
+    <string name="register">Register</string>
+    <string name="register_subtitle">Create a new account</string>
+    <string name="full_name">Full Name</string>
+    <string name="enter_your_full_name">Enter your full name</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="already_have_account">Already have an account?</string>
+
+    <!-- Bottom Navigation -->
+    <string name="navigation_home">Home</string>
+    <string name="navigation_workout">Workout</string>
+    <string name="navigation_profile">Profile</string>
 
     <!-- Error Messages -->
 

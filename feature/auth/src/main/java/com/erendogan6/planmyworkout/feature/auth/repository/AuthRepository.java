@@ -62,4 +62,11 @@ public interface AuthRepository {
      * @return The user ID, or null if no user is authenticated
      */
     String getCurrentUserId();
+
+    /**
+     * Checks if the user has completed the onboarding process.
+     *
+     * @return Task that resolves to true if the user has completed onboarding, false otherwise
+     */
+    Task<Boolean> hasCompletedOnboarding();
 }

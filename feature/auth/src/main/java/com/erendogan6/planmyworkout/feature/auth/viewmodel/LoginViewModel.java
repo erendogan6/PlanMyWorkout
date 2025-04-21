@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.erendogan6.planmyworkout.core.model.Result;
 import com.erendogan6.planmyworkout.feature.auth.model.AuthResponse;
 import com.erendogan6.planmyworkout.feature.auth.model.AuthResult;
+import com.erendogan6.planmyworkout.feature.auth.repository.AuthRepository;
 import com.erendogan6.planmyworkout.feature.auth.usecase.LoginUseCase;
 
 import javax.inject.Inject;
@@ -21,11 +22,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class LoginViewModel extends ViewModel {
 
     private final LoginUseCase loginUseCase;
+    private final AuthRepository authRepository;
     private final MutableLiveData<Result<AuthResult>> loginResult = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> onboardingCompleted = new MutableLiveData<>();
 
     @Inject
-    public LoginViewModel(LoginUseCase loginUseCase) {
+    public LoginViewModel(LoginUseCase loginUseCase, AuthRepository authRepository) {
         this.loginUseCase = loginUseCase;
+        this.authRepository = authRepository;
     }
 
     /**
@@ -43,6 +47,8 @@ public class LoginViewModel extends ViewModel {
                         AuthResponse<AuthResult> response = task.getResult();
 
                         if (response.isSuccess()) {
+                            // Check if the user has completed onboarding
+                            checkOnboardingStatus();
                             loginResult.setValue(Result.success(response.getData()));
                         } else {
                             loginResult.setValue(Result.error(response.getErrorMessage(), null));
@@ -62,5 +68,23 @@ public class LoginViewModel extends ViewModel {
      */
     public LiveData<Result<AuthResult>> getLoginResult() {
         return loginResult;
+    }
+
+    /**
+     * Gets the onboarding completion status LiveData.
+     *
+     * @return LiveData with the onboarding completion status
+     */
+    public LiveData<Boolean> getOnboardingCompleted() {
+        return onboardingCompleted;
+    }
+
+    /**
+     * Checks if the user has completed the onboarding process.
+     */
+    private void checkOnboardingStatus() {
+        authRepository.hasCompletedOnboarding()
+                .addOnSuccessListener(completed -> onboardingCompleted.setValue(completed))
+                .addOnFailureListener(e -> onboardingCompleted.setValue(false));
     }
 }
