@@ -129,9 +129,6 @@ public class ExerciseListFragment extends BaseFragment implements ExerciseListAd
             return;
         }
 
-        // Navigate to exercise history screen
-        Toast.makeText(requireContext(), "Selected: " + exercise.getName(), Toast.LENGTH_SHORT).show();
-
         // Navigate to exercise history with both exerciseId and planId
         ExerciseListFragmentDirections.ActionExerciseListFragmentToExerciseHistoryFragment action =
                 ExerciseListFragmentDirections.actionExerciseListFragmentToExerciseHistoryFragment(exercise.getId(), planId);

@@ -1,6 +1,8 @@
 package com.erendogan6.planmyworkout.feature.workout.ui;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,7 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
     FragmentExerciseHistoryBinding binding;
     private ExerciseHistoryViewModel viewModel;
     private ExerciseLogAdapter adapter;
+    private String currentExerciseName;
 
     @Nullable
     @Override
@@ -56,6 +59,9 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
             NavController navController = Navigation.findNavController(requireView());
             navController.popBackStack();
         });
+
+        // Set up video button
+        binding.btnWatchVideo.setOnClickListener(v -> openYouTubeSearch());
 
         // Set up RecyclerView
         setupRecyclerView();
@@ -80,7 +86,8 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
         // Observe exercise
         viewModel.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             if (exercise != null) {
-                binding.tvExerciseName.setText(exercise.getName());
+                currentExerciseName = exercise.getName();
+                binding.tvExerciseName.setText(currentExerciseName);
 
                 // Set muscle group if available
                 if (exercise.getMuscleGroup() != null && !exercise.getMuscleGroup().isEmpty()) {
@@ -154,6 +161,50 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Opens YouTube search for the current exercise
+     */
+    private void openYouTubeSearch() {
+        if (currentExerciseName == null || currentExerciseName.isEmpty()) {
+            Toast.makeText(requireContext(), "Exercise name not available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            // Format search query: "how to" + exercise name
+            String searchQuery = "how to " + currentExerciseName.toLowerCase();
+
+            // Replace spaces with + for URL
+            String encodedQuery = searchQuery.replace(" ", "+");
+
+            // Create YouTube search URL
+            String youtubeSearchUrl = "https://www.youtube.com/results?search_query=" + encodedQuery;
+
+            // Try to open in YouTube app first
+            Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeSearchUrl));
+            youtubeIntent.setPackage("com.google.android.youtube");
+
+            if (youtubeIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+                // YouTube app is available, open in YouTube app
+                startActivity(youtubeIntent);
+            } else {
+                // YouTube app not available, open in browser
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeSearchUrl));
+
+                if (browserIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+                    startActivity(browserIntent);
+                } else {
+                    // Fallback: Create chooser to let user pick an app
+                    Intent chooserIntent = Intent.createChooser(browserIntent, "Watch exercise video");
+                    startActivity(chooserIntent);
+                }
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error opening YouTube search", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateEmptyState(boolean isEmpty) {
