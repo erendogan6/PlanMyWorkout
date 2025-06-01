@@ -10,6 +10,8 @@ import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseLogsUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseImageUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.SaveExerciseLogUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.DeleteExerciseLogUseCase;
 
 import java.util.List;
 
@@ -26,22 +28,30 @@ public class ExerciseHistoryViewModel extends ViewModel {
     private final GetExerciseUseCase getExerciseUseCase;
     private final GetExerciseLogsUseCase getExerciseLogsUseCase;
     private final GetExerciseImageUseCase getExerciseImageUseCase;
+    private final SaveExerciseLogUseCase saveExerciseLogUseCase;
+    private final DeleteExerciseLogUseCase deleteExerciseLogUseCase;
     private final SavedStateHandle savedStateHandle;
+
     private final MutableLiveData<ExerciseWithProgress> exercise = new MutableLiveData<>();
     private final MutableLiveData<List<ExerciseLog>> logs = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<String> exerciseImageUrl = new MutableLiveData<>();
+    private final MutableLiveData<String> actionMessage = new MutableLiveData<>();
 
     @Inject
     public ExerciseHistoryViewModel(
             GetExerciseUseCase getExerciseUseCase,
             GetExerciseLogsUseCase getExerciseLogsUseCase,
             GetExerciseImageUseCase getExerciseImageUseCase,
+            SaveExerciseLogUseCase saveExerciseLogUseCase,
+            DeleteExerciseLogUseCase deleteExerciseLogUseCase,
             SavedStateHandle savedStateHandle) {
         this.getExerciseUseCase = getExerciseUseCase;
         this.getExerciseLogsUseCase = getExerciseLogsUseCase;
         this.getExerciseImageUseCase = getExerciseImageUseCase;
+        this.saveExerciseLogUseCase = saveExerciseLogUseCase;
+        this.deleteExerciseLogUseCase = deleteExerciseLogUseCase;
         this.savedStateHandle = savedStateHandle;
     }
 
@@ -63,6 +73,10 @@ public class ExerciseHistoryViewModel extends ViewModel {
 
     public LiveData<String> getExerciseImageUrl() {
         return exerciseImageUrl;
+    }
+
+    public LiveData<String> getActionMessage() {
+        return actionMessage;
     }
 
     public String getExerciseId() {
@@ -141,5 +155,43 @@ public class ExerciseHistoryViewModel extends ViewModel {
      */
     public void refreshLogs() {
         loadLogs();
+    }
+
+    /**
+     * Delete an exercise log.
+     */
+    public void deleteLog(ExerciseLog log) {
+        String exerciseId = getExerciseId();
+        String planId = getPlanId();
+
+        if (exerciseId != null && planId != null) {
+            deleteExerciseLogUseCase.execute(planId, exerciseId, log.getId())
+                    .addOnSuccessListener(aVoid -> {
+                        actionMessage.setValue("Log deleted successfully");
+                        refreshLogs(); // Reload logs after deletion
+                    })
+                    .addOnFailureListener(e -> {
+                        errorMessage.setValue("Failed to delete log: " + e.getMessage());
+                    });
+        }
+    }
+
+    /**
+     * Duplicate an exercise log (create new with same data).
+     */
+    public void duplicateLog(ExerciseLog log) {
+        String exerciseId = getExerciseId();
+        String planId = getPlanId();
+
+        if (exerciseId != null && planId != null) {
+            saveExerciseLogUseCase.execute(planId, exerciseId, log.getWeight(), log.getReps(), log.getNotes())
+                    .addOnSuccessListener(aVoid -> {
+                        actionMessage.setValue("Log duplicated successfully");
+                        refreshLogs(); // Reload logs after duplication
+                    })
+                    .addOnFailureListener(e -> {
+                        errorMessage.setValue("Failed to duplicate log: " + e.getMessage());
+                    });
+        }
     }
 }

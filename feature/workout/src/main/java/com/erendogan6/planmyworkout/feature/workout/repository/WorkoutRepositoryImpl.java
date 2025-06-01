@@ -509,4 +509,41 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
 
         return taskCompletionSource.getTask();
     }
+
+    /**
+     * Delete an existing exercise log.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @param logId The log ID
+     * @return Task indicating success or failure
+     */
+    @Override
+    public Task<Void> deleteExerciseLog(String planId, String exerciseId, String logId) {
+        String userId = firestoreManager.getCurrentUserId();
+        if (userId == null) {
+            return Tasks.forException(new IllegalStateException("User not logged in"));
+        }
+
+        // References to both storage locations
+        DocumentReference nestedLogRef = firestore.collection("users")
+                .document(userId)
+                .collection("plans")
+                .document(planId)
+                .collection("exercises")
+                .document(exerciseId)
+                .collection("logs")
+                .document(logId);
+
+        DocumentReference flatLogRef = firestore.collection("users")
+                .document(userId)
+                .collection("exerciseLogs")
+                .document(logId);
+
+        // Delete from both locations using a batch write
+        return firestore.runBatch(batch -> {
+            batch.delete(nestedLogRef);
+            batch.delete(flatLogRef);
+        });
+    }
 }

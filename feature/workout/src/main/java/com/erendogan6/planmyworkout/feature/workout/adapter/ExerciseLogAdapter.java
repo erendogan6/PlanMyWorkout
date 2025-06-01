@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.erendogan6.planmyworkout.feature.workout.R;
@@ -20,6 +21,7 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
 
     private List<ExerciseLog> logs;
     private final OnLogSelectedListener listener;
+    private OnLogActionListener actionListener;
 
     /**
      * Interface for handling log selection events.
@@ -28,9 +30,21 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
         void onLogSelected(ExerciseLog log);
     }
 
+    /**
+     * Interface for handling swipe actions.
+     */
+    public interface OnLogActionListener {
+        void onDeleteLog(ExerciseLog log, int position);
+        void onDuplicateLog(ExerciseLog log, int position);
+    }
+
     public ExerciseLogAdapter(List<ExerciseLog> logs, OnLogSelectedListener listener) {
         this.logs = logs;
         this.listener = listener;
+    }
+
+    public void setOnLogActionListener(OnLogActionListener actionListener) {
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -61,9 +75,46 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
     }
 
     /**
+     * Remove item for swipe action
+     */
+    public void removeItem(int position) {
+        if (logs != null && position >= 0 && position < logs.size()) {
+            logs.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    /**
+     * Restore item for undo action
+     */
+    public void restoreItem(ExerciseLog log, int position) {
+        if (logs != null) {
+            logs.add(position, log);
+            notifyItemInserted(position);
+        }
+    }
+
+    /**
+     * Handle swipe actions
+     */
+    public void onItemSwiped(int position, int direction) {
+        if (logs != null && position >= 0 && position < logs.size()) {
+            ExerciseLog log = logs.get(position);
+
+            if (actionListener != null) {
+                if (direction == ItemTouchHelper.LEFT) {
+                    actionListener.onDeleteLog(log, position);
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    actionListener.onDuplicateLog(log, position);
+                }
+            }
+        }
+    }
+
+    /**
      * ViewHolder for exercise logs.
      */
-    static class LogViewHolder extends RecyclerView.ViewHolder {
+    class LogViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvDate;
         private final TextView tvWeightReps;
         private final TextView tvNotes;
@@ -82,7 +133,7 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
             tvWeightReps.setText(String.format("%.1f kg × %d", log.getWeight(), log.getReps()));
 
             // Show notes if available
-            if (log.getNotes() != null && !log.getNotes().isEmpty()) {
+            if (log.getNotes() != null && !log.getNotes().trim().isEmpty()) {
                 divider.setVisibility(View.VISIBLE);
                 tvNotes.setVisibility(View.VISIBLE);
                 tvNotes.setText(log.getNotes());
@@ -94,7 +145,10 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
             // Add ripple effect animation
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onLogSelected(log);
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onLogSelected(log);
+                    }
                 }
             });
         }

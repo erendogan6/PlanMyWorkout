@@ -25,6 +25,7 @@ public class ExerciseDetailViewModel extends ViewModel {
     private final GetExerciseUseCase getExerciseUseCase;
     private final GetLatestExerciseLogUseCase getLatestExerciseLogUseCase;
     private final SaveExerciseLogUseCase saveExerciseLogUseCase;
+    private final UpdateExerciseLogUseCase updateExerciseLogUseCase;
     private final SavedStateHandle savedStateHandle;
     private final MutableLiveData<ExerciseWithProgress> exercise = new MutableLiveData<>();
     private final MutableLiveData<ExerciseLog> latestLog = new MutableLiveData<>();
@@ -36,9 +37,6 @@ public class ExerciseDetailViewModel extends ViewModel {
     // Edit mode fields
     private boolean editMode = false;
     private String logId = "";
-
-    private final UpdateExerciseLogUseCase updateExerciseLogUseCase;
-
     @Inject
     public ExerciseDetailViewModel(
             GetExerciseUseCase getExerciseUseCase,
