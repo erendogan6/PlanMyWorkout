@@ -10,6 +10,9 @@
     <!-- Workout Tab -->
     <include android:id="@+id/workout_navigation" app:graph="@navigation/workout_navigation" />
 
+    <!-- Progress Tab -->
+    <include android:id="@+id/progress_navigation" app:graph="@navigation/progress_navigation" />
+
     <!-- Profile Tab -->
     <include android:id="@+id/profile_navigation" app:graph="@navigation/profile_navigation" />
 </navigation>
