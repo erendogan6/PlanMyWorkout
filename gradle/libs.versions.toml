@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.0-alpha07"
+agp = "8.12.0-alpha03"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -7,14 +7,13 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
-firebase-bom = "33.12.0"
-hilt = "2.56.1"
+firebase-bom = "33.14.0"
+hilt = "2.56.2"
 hilt-android = "1.2.0"
-lifecycle = "2.8.7"
-room = "2.7.0"
-kotlinx-coroutines = "1.10.2"
-navigation = "2.8.9"
-lottie = "6.4.0"
+lifecycle = "2.9.0"
+room = "2.7.1"
+navigation = "2.9.0"
+lottie = "6.6.6"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -43,11 +42,6 @@ lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", 
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-
-# Coroutines
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 
 # Navigation
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }
