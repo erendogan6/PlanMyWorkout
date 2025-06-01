@@ -157,10 +157,9 @@ public class ExerciseDetailFragment extends BaseFragment {
             if (Boolean.TRUE.equals(success)) {
                 Toast.makeText(requireContext(), "Exercise log saved successfully", Toast.LENGTH_SHORT).show();
 
-                // Clear input fields
-                binding.etWeight.setText("");
-                binding.etReps.setText("");
-                binding.etNotes.setText("");
+                // Navigate back to Exercise History Fragment
+                NavController navController = Navigation.findNavController(requireView());
+                navController.popBackStack();
             }
         });
 
