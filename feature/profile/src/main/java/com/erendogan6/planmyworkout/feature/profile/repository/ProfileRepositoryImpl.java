@@ -149,22 +149,6 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     }
 
     @Override
-    public Task<Void> updateUserProfile(UserProfile userProfile) {
-        String userId = getCurrentUserId();
-        if (userId == null) {
-            return Tasks.forException(new IllegalStateException("User not authenticated"));
-        }
-
-        return firestore.collection("users")
-                .document(userId)
-                .update(
-                        "fullName", userProfile.getFullName(),
-                        "email", userProfile.getEmail(),
-                        "profilePictureUrl", userProfile.getProfilePictureUrl()
-                );
-    }
-
-    @Override
     public Task<Void> logout() {
         return Tasks.call(() -> {
             firebaseAuth.signOut();

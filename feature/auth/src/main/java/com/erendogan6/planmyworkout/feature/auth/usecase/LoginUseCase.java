@@ -23,11 +23,6 @@ public class LoginUseCase {
 
     /**
      * Executes the login operation with provided email and password.
-     * Performs basic validation before calling the repository.
-     *
-     * @param email    User's email address
-     * @param password User's password
-     * @return Task containing AuthResponse with either AuthResult or error
      */
     public Task<AuthResponse<AuthResult>> execute(String email, String password) {
         // Basic validation
@@ -39,15 +34,32 @@ public class LoginUseCase {
             return createErrorTask("Password cannot be empty");
         }
 
-        // Call repository
-        return authRepository.login(email, password);
+        // Call repository and set remember me preference on successful login
+        return authRepository.login(email, password)
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        AuthResponse<AuthResult> response = task.getResult();
+                        if (response.isSuccess()) {
+                            authRepository.setRememberMePreference(true);
+                        }
+                        return response;
+                    } else {
+                        Exception exception = task.getException();
+                        String errorMessage = exception != null ? exception.getMessage() : "Login failed";
+                        return new AuthResponse.Error<AuthResult>(errorMessage, exception);
+                    }
+                });
+    }
+
+    /**
+     * Executes automatic login for remembered users.
+     */
+    public Task<AuthResponse<AuthResult>> executeAutoLogin() {
+        return authRepository.autoLogin();
     }
 
     /**
      * Helper method to create a Task that returns an error AuthResponse.
-     *
-     * @param errorMessage The error message to include in the response
-     * @return Task containing an error AuthResponse
      */
     private Task<AuthResponse<AuthResult>> createErrorTask(String errorMessage) {
         TaskCompletionSource<AuthResponse<AuthResult>> taskSource = new TaskCompletionSource<>();

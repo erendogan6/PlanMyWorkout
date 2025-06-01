@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
-
 import com.erendogan6.planmyworkout.feature.auth.R;
 import com.erendogan6.planmyworkout.feature.auth.databinding.FragmentLoginBinding;
 import com.erendogan6.planmyworkout.feature.auth.viewmodel.LoginViewModel;
@@ -41,6 +40,17 @@ public class LoginFragment extends BaseFragment {
 
         setupListeners();
         observeViewModel();
+
+        if (shouldShowAutoLoginLoading()) {
+            binding.layoutLoginForm.setVisibility(View.GONE);
+            binding.layoutAutoLoginLoading.setVisibility(View.VISIBLE);
+        } else {
+            binding.layoutLoginForm.setVisibility(View.VISIBLE);
+            binding.layoutAutoLoginLoading.setVisibility(View.GONE);
+        }
+
+        // Check for auto-login when fragment is created
+        viewModel.checkForAutoLogin();
     }
 
     private void setupListeners() {
@@ -55,23 +65,39 @@ public class LoginFragment extends BaseFragment {
                         .navigate(R.id.action_loginFragment_to_registerFragment));
     }
 
+    private boolean shouldShowAutoLoginLoading() {
+        return viewModel.shouldAttemptAutoLogin();
+    }
+
     private void observeViewModel() {
         // Observe login result
         viewModel.getLoginResult().observe(getViewLifecycleOwner(), result -> {
             if (result.isLoading()) {
-                // Show loading state
                 binding.btnLogin.setEnabled(false);
                 showLoading();
+                binding.layoutLoginForm.setVisibility(View.GONE);
+                binding.layoutAutoLoginLoading.setVisibility(View.VISIBLE);
             } else {
                 binding.btnLogin.setEnabled(true);
                 hideLoading();
+                binding.layoutAutoLoginLoading.setVisibility(View.GONE);
 
                 if (result.isSuccess()) {
-                    // Login successful, but don't navigate yet
-                    // Navigation will be handled by onboardingCompleted observer
                 } else if (result.isError()) {
-                    // Show error message
-                    Toast.makeText(requireContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                    binding.layoutLoginForm.setVisibility(View.VISIBLE);
+
+                    if (result.getMessage() != null) {
+                        Toast.makeText(requireContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        viewModel.getAutoLoginChecked().observe(getViewLifecycleOwner(), checked -> {
+            if (checked) {
+                binding.layoutAutoLoginLoading.setVisibility(View.GONE);
+                if (!viewModel.shouldAttemptAutoLogin()) {
+                    binding.layoutLoginForm.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -80,11 +106,9 @@ public class LoginFragment extends BaseFragment {
         viewModel.getOnboardingCompleted().observe(getViewLifecycleOwner(), completed -> {
             if (completed != null) {
                 if (completed) {
-                    // User has completed onboarding, navigate to home screen
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_loginFragment_to_bottom_nav_graph);
                 } else {
-                    // User has not completed onboarding, navigate to onboarding
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_loginFragment_to_onboarding_navigation);
                 }

@@ -25,6 +25,7 @@ public class LoginViewModel extends ViewModel {
     private final AuthRepository authRepository;
     private final MutableLiveData<Result<AuthResult>> loginResult = new MutableLiveData<>();
     private final MutableLiveData<Boolean> onboardingCompleted = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> autoLoginChecked = new MutableLiveData<>();
 
     @Inject
     public LoginViewModel(LoginUseCase loginUseCase, AuthRepository authRepository) {
@@ -34,9 +35,6 @@ public class LoginViewModel extends ViewModel {
 
     /**
      * Attempts to log in with the provided credentials.
-     *
-     * @param email    User's email
-     * @param password User's password
      */
     public void login(String email, String password) {
         loginResult.setValue(Result.loading(null));
@@ -61,10 +59,47 @@ public class LoginViewModel extends ViewModel {
                 });
     }
 
+    public boolean shouldAttemptAutoLogin() {
+        return authRepository.isUserLoggedIn() && authRepository.getRememberMePreference();
+    }
+
+    /**
+     * Attempts automatic login for remembered users.
+     */
+    public void attemptAutoLogin() {
+        loginResult.setValue(Result.loading(null));
+
+        loginUseCase.executeAutoLogin()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        AuthResponse<AuthResult> response = task.getResult();
+
+                        if (response.isSuccess()) {
+                            checkOnboardingStatus();
+                            loginResult.setValue(Result.success(response.getData()));
+                        } else {
+                            loginResult.setValue(Result.error(null, null));
+                        }
+                    } else {
+                        loginResult.setValue(Result.error(null, null));
+                    }
+                    autoLoginChecked.setValue(true);
+                });
+    }
+
+    /**
+     * Checks if auto-login should be attempted.
+     */
+    public void checkForAutoLogin() {
+        if (authRepository.isUserLoggedIn() && authRepository.getRememberMePreference()) {
+            attemptAutoLogin();
+        } else {
+            autoLoginChecked.setValue(true);
+        }
+    }
+
     /**
      * Gets the login result LiveData.
-     *
-     * @return LiveData with the login result
      */
     public LiveData<Result<AuthResult>> getLoginResult() {
         return loginResult;
@@ -72,11 +107,16 @@ public class LoginViewModel extends ViewModel {
 
     /**
      * Gets the onboarding completion status LiveData.
-     *
-     * @return LiveData with the onboarding completion status
      */
     public LiveData<Boolean> getOnboardingCompleted() {
         return onboardingCompleted;
+    }
+
+    /**
+     * Gets the auto login checked status LiveData.
+     */
+    public LiveData<Boolean> getAutoLoginChecked() {
+        return autoLoginChecked;
     }
 
     /**
@@ -84,7 +124,7 @@ public class LoginViewModel extends ViewModel {
      */
     private void checkOnboardingStatus() {
         authRepository.hasCompletedOnboarding()
-                .addOnSuccessListener(completed -> onboardingCompleted.setValue(completed))
+                .addOnSuccessListener(onboardingCompleted::setValue)
                 .addOnFailureListener(e -> onboardingCompleted.setValue(false));
     }
 }
