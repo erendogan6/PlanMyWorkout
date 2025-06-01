@@ -84,4 +84,24 @@ public class ExerciseLog {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
         return dateFormat.format(timestamp);
     }
+
+    public String getFormattedTime() {
+        if (timestamp == null) {
+            return "";
+        }
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return timeFormat.format(this.timestamp);
+    }
+
+    public String getFormattedDateHeader() {
+        if (timestamp == null) {
+            return "";
+        }
+        SimpleDateFormat headerFormat = new SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault());
+        return headerFormat.format(this.timestamp).toUpperCase();
+    }
+
+    public Date getDate() {
+        return timestamp;
+    }
 }

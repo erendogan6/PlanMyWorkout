@@ -16,16 +16,21 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseLogAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseHistoryBinding;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogHeader;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogItem;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogItemWrapper;
 import com.erendogan6.planmyworkout.feature.workout.util.SwipeToActionHelper;
 import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseHistoryViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import coil.Coil;
 import coil.request.ImageRequest;
@@ -86,17 +91,30 @@ public class ExerciseHistoryFragment extends BaseFragment implements
         adapter = new ExerciseLogAdapter(new ArrayList<>(), this);
         adapter.setOnLogActionListener(this);
         binding.rvLogs.setAdapter(adapter);
-        SwipeToActionHelper swipeHelper = new SwipeToActionHelper(requireContext(), adapter);
+
+        // Update swipe helper to handle different view types
+        SwipeToActionHelper swipeHelper = new SwipeToActionHelper(requireContext(), adapter) {
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof ExerciseLogAdapter.HeaderViewHolder) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+        };
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeHelper);
         itemTouchHelper.attachToRecyclerView(binding.rvLogs);
     }
 
     @Override
     public void onDeleteLog(ExerciseLog log, int position) {
+        // Get the item from adapter before removing
+        ExerciseLogItem removedItem = adapter.getItem(position);
         adapter.removeItem(position);
 
         Snackbar.make(binding.getRoot(), "Log deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", v -> adapter.restoreItem(log, position))
+                .setAction("UNDO", v -> adapter.restoreItem(removedItem, position)) // ExerciseLogItem kullan
                 .setActionTextColor(getResources().getColor(com.erendogan6.planmyworkout.coreui.R.color.accent))
                 .addCallback(new Snackbar.Callback() {
                     @Override
@@ -176,7 +194,8 @@ public class ExerciseHistoryFragment extends BaseFragment implements
         // Observe logs
         viewModel.getLogs().observe(getViewLifecycleOwner(), logs -> {
             if (logs != null) {
-                adapter.updateLogs(logs);
+                List<ExerciseLogItem> groupedItems = groupLogsByDate(logs);
+                adapter.updateLogs(groupedItems);
                 updateEmptyState(logs.isEmpty());
             } else {
                 updateEmptyState(true);
@@ -200,6 +219,35 @@ public class ExerciseHistoryFragment extends BaseFragment implements
                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private List<ExerciseLogItem> groupLogsByDate(List<ExerciseLog> logs) {
+        List<ExerciseLogItem> groupedItems = new ArrayList<>();
+
+        if (logs.isEmpty()) {
+            return groupedItems;
+        }
+
+        // Sort logs by date descending
+        List<ExerciseLog> sortedLogs = new ArrayList<>(logs);
+        sortedLogs.sort((a, b) -> b.getDate().compareTo(a.getDate()));
+
+        String currentDate = null;
+
+        for (ExerciseLog log : sortedLogs) {
+            String logDate = log.getFormattedDateHeader();
+
+            // Add header if date changed
+            if (!logDate.equals(currentDate)) {
+                groupedItems.add(new ExerciseLogHeader(logDate));
+                currentDate = logDate;
+            }
+
+            // Add log item
+            groupedItems.add(new ExerciseLogItemWrapper(log));
+        }
+
+        return groupedItems;
     }
 
     /**

@@ -11,35 +11,57 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.erendogan6.planmyworkout.feature.workout.R;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogHeader;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogItem;
+import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLogItemWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Adapter for displaying exercise logs in a RecyclerView.
  */
-public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.LogViewHolder> {
+public class ExerciseLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ExerciseLog> logs;
+    private List<ExerciseLogItem> items;
     private final OnLogSelectedListener listener;
     private OnLogActionListener actionListener;
 
-    /**
-     * Interface for handling log selection events.
-     */
     public interface OnLogSelectedListener {
         void onLogSelected(ExerciseLog log);
     }
 
-    /**
-     * Interface for handling swipe actions.
-     */
     public interface OnLogActionListener {
         void onDeleteLog(ExerciseLog log, int position);
         void onDuplicateLog(ExerciseLog log, int position);
     }
 
-    public ExerciseLogAdapter(List<ExerciseLog> logs, OnLogSelectedListener listener) {
-        this.logs = logs;
+    /**
+     * Get item at specific position
+     */
+    public ExerciseLogItem getItem(int position) {
+        if (items != null && position >= 0 && position < items.size()) {
+            return items.get(position);
+        }
+        return null;
+    }
+
+    public void removeItem(int position) {
+        if (items != null && position >= 0 && position < items.size()) {
+            items.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void restoreItem(ExerciseLogItem item, int position) {
+        if (items != null && item != null) {
+            items.add(position, item);
+            notifyItemInserted(position);
+        }
+    }
+
+    public ExerciseLogAdapter(List<ExerciseLogItem> items, OnLogSelectedListener listener) {
+        this.items = items != null ? items : new ArrayList<>();
         this.listener = listener;
     }
 
@@ -47,61 +69,54 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
         this.actionListener = actionListener;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return items.get(position).getType();
+    }
+
     @NonNull
     @Override
-    public LogViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_exercise_log, parent, false);
-        return new LogViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if (viewType == ExerciseLogItem.TYPE_HEADER) {
+            View view = inflater.inflate(R.layout.item_exercise_log_header, parent, false);
+            return new HeaderViewHolder(view);
+        } else {
+            View view = inflater.inflate(R.layout.item_exercise_log, parent, false);
+            return new LogViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
-        ExerciseLog log = logs.get(position);
-        holder.bind(log, listener);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ExerciseLogItem item = items.get(position);
+
+        if (holder instanceof HeaderViewHolder && item instanceof ExerciseLogHeader) {
+            ((HeaderViewHolder) holder).bind((ExerciseLogHeader) item);
+        } else if (holder instanceof LogViewHolder && item instanceof ExerciseLogItemWrapper) {
+            ((LogViewHolder) holder).bind(((ExerciseLogItemWrapper) item).getLog(), listener);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return logs != null ? logs.size() : 0;
+        return items != null ? items.size() : 0;
     }
 
-    /**
-     * Update the logs in the adapter.
-     */
-    public void updateLogs(List<ExerciseLog> newLogs) {
-        this.logs = newLogs;
+    public void updateLogs(List<ExerciseLogItem> newItems) {
+        this.items = newItems != null ? newItems : new ArrayList<>();
         notifyDataSetChanged();
     }
 
-    /**
-     * Remove item for swipe action
-     */
-    public void removeItem(int position) {
-        if (logs != null && position >= 0 && position < logs.size()) {
-            logs.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    /**
-     * Restore item for undo action
-     */
-    public void restoreItem(ExerciseLog log, int position) {
-        if (logs != null) {
-            logs.add(position, log);
-            notifyItemInserted(position);
-        }
-    }
-
-    /**
-     * Handle swipe actions
-     */
     public void onItemSwiped(int position, int direction) {
-        if (logs != null && position >= 0 && position < logs.size()) {
-            ExerciseLog log = logs.get(position);
+        if (items != null && position >= 0 && position < items.size()) {
+            ExerciseLogItem item = items.get(position);
 
-            if (actionListener != null) {
+            // Only allow swiping on log items, not headers
+            if (item instanceof ExerciseLogItemWrapper && actionListener != null) {
+                ExerciseLog log = ((ExerciseLogItemWrapper) item).getLog();
+
                 if (direction == ItemTouchHelper.LEFT) {
                     actionListener.onDeleteLog(log, position);
                 } else if (direction == ItemTouchHelper.RIGHT) {
@@ -111,38 +126,51 @@ public class ExerciseLogAdapter extends RecyclerView.Adapter<ExerciseLogAdapter.
         }
     }
 
-    /**
-     * ViewHolder for exercise logs.
-     */
-    class LogViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvDate;
-        private final TextView tvWeightReps;
+    // Header ViewHolder
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvHeaderDate;
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHeaderDate = itemView.findViewById(R.id.tvHeaderDate);
+        }
+
+        public void bind(ExerciseLogHeader header) {
+            tvHeaderDate.setText(header.getDate());
+        }
+    }
+
+    // Log ViewHolder
+    static class LogViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvTime;
+        private final TextView tvReps;
+        private final TextView tvWeight;
         private final TextView tvNotes;
-        private final View divider;
 
         public LogViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDate = itemView.findViewById(R.id.tvDate);
-            tvWeightReps = itemView.findViewById(R.id.tvWeightReps);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            tvReps = itemView.findViewById(R.id.tvReps);
+            tvWeight = itemView.findViewById(R.id.tvWeight);
             tvNotes = itemView.findViewById(R.id.tvNotes);
-            divider = itemView.findViewById(R.id.divider);
         }
 
         public void bind(ExerciseLog log, OnLogSelectedListener listener) {
-            tvDate.setText(log.getFormattedDate());
-            tvWeightReps.setText(String.format("%.1f kg × %d", log.getWeight(), log.getReps()));
+            // Set time only (extract from formatted date)
+            tvTime.setText(log.getFormattedTime()); // You'll need to add this method
+
+            // Set reps and weight
+            tvReps.setText(String.valueOf(log.getReps()));
+            tvWeight.setText(String.valueOf((int) log.getWeight()));
 
             // Show notes if available
             if (log.getNotes() != null && !log.getNotes().trim().isEmpty()) {
-                divider.setVisibility(View.VISIBLE);
                 tvNotes.setVisibility(View.VISIBLE);
                 tvNotes.setText(log.getNotes());
             } else {
-                divider.setVisibility(View.GONE);
                 tvNotes.setVisibility(View.GONE);
             }
 
-            // Add ripple effect animation
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
