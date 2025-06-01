@@ -6,9 +6,9 @@
         android:title="@string/navigation_home" />
 
     <item
-        android:id="@+id/workout_navigation"
+        android:id="@id/progress_navigation"
         android:icon="@drawable/ic_workout"
-        android:title="@string/navigation_workout" />
+        android:title="Progress" />
 
     <item
         android:id="@+id/profile_navigation"

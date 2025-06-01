@@ -352,9 +352,18 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
             return Tasks.forException(new IllegalStateException("User not logged in"));
         }
 
-        // Create a new document with the current timestamp as the ID
-        String timestamp = String.valueOf(new Date().getTime());
-        DocumentReference logRef = firestore.collection("users")
+        Date currentTime = new Date();
+        String timestamp = String.valueOf(currentTime.getTime());
+
+        // Create the log data
+        Map<String, Object> logData = new HashMap<>();
+        logData.put("weight", weight);
+        logData.put("reps", reps);
+        logData.put("notes", notes);
+        logData.put("timestamp", currentTime);
+
+        // 1. Save to nested structure (existing structure for workout tracking)
+        DocumentReference nestedLogRef = firestore.collection("users")
                 .document(userId)
                 .collection("plans")
                 .document(planId)
@@ -363,15 +372,31 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
                 .collection("logs")
                 .document(timestamp);
 
-        // Create the log data
-        Map<String, Object> logData = new HashMap<>();
-        logData.put("weight", weight);
-        logData.put("reps", reps);
-        logData.put("notes", notes);
-        logData.put("timestamp", new Date());
+        // 2. Save to flat structure for progress tracking
+        DocumentReference flatLogRef = firestore.collection("users")
+                .document(userId)
+                .collection("exerciseLogs")
+                .document(timestamp);
 
-        // Save the log to Firestore
-        return logRef.set(logData);
+        // Add additional fields for progress tracking
+        Map<String, Object> progressLogData = new HashMap<>(logData);
+        progressLogData.put("userId", userId);
+        progressLogData.put("planId", planId);
+        progressLogData.put("exerciseId", exerciseId);
+
+        // Get exercise name for progress display
+        return getExercise(planId, exerciseId)
+                .continueWithTask(exerciseTask -> {
+                    if (exerciseTask.isSuccessful() && exerciseTask.getResult() != null) {
+                        progressLogData.put("exerciseName", exerciseTask.getResult().getName());
+                    }
+
+                    // Save to both locations using a batch write
+                    return firestore.runBatch(batch -> {
+                        batch.set(nestedLogRef, logData);
+                        batch.set(flatLogRef, progressLogData);
+                    });
+                });
     }
 
     /**
@@ -392,7 +417,15 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
             return Tasks.forException(new IllegalStateException("User not logged in"));
         }
 
-        DocumentReference logRef = firestore.collection("users")
+        // Create the updated log data
+        Map<String, Object> logData = new HashMap<>();
+        logData.put("weight", weight);
+        logData.put("reps", reps);
+        logData.put("notes", notes);
+        // Don't update the timestamp for edits
+
+        // References to both storage locations
+        DocumentReference nestedLogRef = firestore.collection("users")
                 .document(userId)
                 .collection("plans")
                 .document(planId)
@@ -401,15 +434,16 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
                 .collection("logs")
                 .document(logId);
 
-        // Create the updated log data
-        Map<String, Object> logData = new HashMap<>();
-        logData.put("weight", weight);
-        logData.put("reps", reps);
-        logData.put("notes", notes);
-        // Don't update the timestamp for edits
+        DocumentReference flatLogRef = firestore.collection("users")
+                .document(userId)
+                .collection("exerciseLogs")
+                .document(logId);
 
-        // Update the log in Firestore
-        return logRef.update(logData);
+        // Update both locations using a batch write
+        return firestore.runBatch(batch -> {
+            batch.update(nestedLogRef, logData);
+            batch.update(flatLogRef, logData);
+        });
     }
 
 
