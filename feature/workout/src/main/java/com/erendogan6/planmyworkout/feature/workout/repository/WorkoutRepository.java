@@ -87,4 +87,14 @@ public interface WorkoutRepository {
      * @return Task with the image URL
      */
     Task<String> getExerciseImage(String exerciseName);
+
+    /**
+     * Delete an exercise log.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @param logId The log ID
+     * @return Task indicating success or failure
+     */
+    Task<Void> deleteExerciseLog(String planId, String exerciseId, String logId);
 }

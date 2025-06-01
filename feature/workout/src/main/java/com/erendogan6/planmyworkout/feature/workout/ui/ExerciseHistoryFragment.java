@@ -14,13 +14,16 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseLogAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseHistoryBinding;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
+import com.erendogan6.planmyworkout.feature.workout.util.SwipeToActionHelper;
 import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseHistoryViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -33,10 +36,12 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Fragment for displaying the history of logs for a specific exercise.
  */
 @AndroidEntryPoint
-public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLogAdapter.OnLogSelectedListener {
+public class ExerciseHistoryFragment extends BaseFragment implements
+        ExerciseLogAdapter.OnLogSelectedListener,
+        ExerciseLogAdapter.OnLogActionListener {
 
     FragmentExerciseHistoryBinding binding;
-    private ExerciseHistoryViewModel viewModel;
+    ExerciseHistoryViewModel viewModel;
     private ExerciseLogAdapter adapter;
     private String currentExerciseName;
 
@@ -79,7 +84,34 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
     private void setupRecyclerView() {
         binding.rvLogs.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExerciseLogAdapter(new ArrayList<>(), this);
+        adapter.setOnLogActionListener(this);
         binding.rvLogs.setAdapter(adapter);
+        SwipeToActionHelper swipeHelper = new SwipeToActionHelper(requireContext(), adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeHelper);
+        itemTouchHelper.attachToRecyclerView(binding.rvLogs);
+    }
+
+    @Override
+    public void onDeleteLog(ExerciseLog log, int position) {
+        adapter.removeItem(position);
+
+        Snackbar.make(binding.getRoot(), "Log deleted", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", v -> adapter.restoreItem(log, position))
+                .setActionTextColor(getResources().getColor(com.erendogan6.planmyworkout.coreui.R.color.accent))
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        if (event != DISMISS_EVENT_ACTION) {
+                            viewModel.deleteLog(log);
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void onDuplicateLog(ExerciseLog log, int position) {
+        viewModel.duplicateLog(log);
     }
 
     private void observeViewModel() {
@@ -96,6 +128,13 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
                 } else {
                     binding.tvMuscleGroup.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        // Observe action message
+        viewModel.getActionMessage().observe(getViewLifecycleOwner(), message -> {
+            if (message != null && !message.isEmpty()) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
 
