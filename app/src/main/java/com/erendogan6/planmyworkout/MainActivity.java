@@ -50,14 +50,27 @@ public class MainActivity extends BaseActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-            // If the same tab is selected, pop to root
-            if (itemId == currentTabId) {
-                navController.popBackStack(navController.getGraph().getStartDestinationId(), false);
-                return true;
+            // Get current destination
+            NavDestination currentDestination = navController.getCurrentDestination();
+            if (currentDestination == null) {
+                return false;
+            }
+
+            // If the same tab is selected, do nothing
+            if (itemId == currentDestination.getId()) {
+                return true; // Consume the event but don't navigate
+            }
+
+            // Check if we're in a child of the selected graph
+            NavGraph parentGraph = currentDestination.getParent();
+            while (parentGraph != null) {
+                if (itemId == parentGraph.getId()) {
+                    return true; // Already in this tab, do nothing
+                }
+                parentGraph = parentGraph.getParent();
             }
 
             // Switch to the selected tab
-            currentTabId = itemId;
             return NavigationUI.onNavDestinationSelected(item, navController);
         });
 
