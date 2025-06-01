@@ -1,6 +1,7 @@
 package com.erendogan6.planmyworkout.core.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,5 +36,17 @@ public class CoreModule {
             FirebaseApp.initializeApp(context);
         }
         return FirebaseFirestore.getInstance();
+    }
+
+    /**
+     * Provides SharedPreferences instance.
+     *
+     * @param context Application context
+     * @return SharedPreferences instance
+     */
+    @Provides
+    @Singleton
+    public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
+        return context.getSharedPreferences("plan_my_workout_prefs", Context.MODE_PRIVATE);
     }
 }

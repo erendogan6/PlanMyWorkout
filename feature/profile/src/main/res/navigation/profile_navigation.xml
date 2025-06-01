@@ -16,6 +16,17 @@
         <action
             android:id="@+id/action_profileFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <!-- Add these new actions -->
+        <action
+            android:id="@+id/action_profileFragment_to_onboarding_navigation"
+            app:destination="@id/onboarding_navigation"
+            app:popUpTo="@id/bottom_nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_profileFragment_to_auth_navigation"
+            app:destination="@id/auth_navigation"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

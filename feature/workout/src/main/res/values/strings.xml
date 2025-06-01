@@ -17,7 +17,7 @@
     <string name="no_exercises_available">No exercises available</string>
 
     <!-- Exercise History Screen -->
-    <string name="workout_history">WORKOUT HISTORY</string>
+    <string name="workout_history">Workout History</string>
     <string name="your_progress">Your Progress</string>
     <string name="track_performance">Track your performance over time</string>
     <string name="no_logs_available">No logs available</string>

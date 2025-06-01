@@ -1,4 +1,4 @@
-package com.erendogan6.planmyworkout.feature.home.model;
+package com.erendogan6.planmyworkout.core.model;
 
 import java.util.List;
 
@@ -17,8 +17,7 @@ public class WorkoutPlan {
     private List<String> exerciseNames;
 
     // Required empty constructor for Firestore
-    public WorkoutPlan() {
-    }
+    public WorkoutPlan() {}
 
     public WorkoutPlan(String id, String name, String description, String difficulty,
                       int daysPerWeek, int durationWeeks) {
