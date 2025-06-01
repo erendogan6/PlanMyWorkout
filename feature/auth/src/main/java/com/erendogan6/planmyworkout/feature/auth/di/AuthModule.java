@@ -1,6 +1,7 @@
 package com.erendogan6.planmyworkout.feature.auth.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.erendogan6.planmyworkout.feature.auth.repository.AuthRepository;
 import com.erendogan6.planmyworkout.feature.auth.repository.AuthRepositoryImpl;
@@ -49,7 +50,7 @@ public class AuthModule {
      */
     @Provides
     @Singleton
-    public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth, FirebaseFirestore firestore) {
-        return new AuthRepositoryImpl(firebaseAuth, firestore);
+    public AuthRepository provideAuthRepository(FirebaseAuth firebaseAuth, FirebaseFirestore firestore, SharedPreferences sharedPreferences) {
+        return new AuthRepositoryImpl(firebaseAuth, firestore, sharedPreferences);
     }
 }

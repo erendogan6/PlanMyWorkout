@@ -1,9 +1,12 @@
 package com.erendogan6.planmyworkout.feature.auth.repository;
 
+import android.content.SharedPreferences;
+
 import com.erendogan6.planmyworkout.feature.auth.model.AuthResult;
 import com.erendogan6.planmyworkout.feature.auth.model.AuthResponse;
 import com.erendogan6.planmyworkout.feature.auth.model.User;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +28,7 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     private final FirebaseAuth firebaseAuth;
     private final FirebaseFirestore firestore;
+    private final SharedPreferences sharedPreferences;
 
     /**
      * Constructor for dependency injection.
@@ -33,9 +37,91 @@ public class AuthRepositoryImpl implements AuthRepository {
      * @param firestore Firebase Firestore instance
      */
     @Inject
-    public AuthRepositoryImpl(FirebaseAuth firebaseAuth, FirebaseFirestore firestore) {
+    public AuthRepositoryImpl(FirebaseAuth firebaseAuth, FirebaseFirestore firestore,
+                              SharedPreferences sharedPreferences) {
         this.firebaseAuth = firebaseAuth;
         this.firestore = firestore;
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    private static final String PREF_REMEMBER_ME = "remember_me";
+
+    /**
+     * {@inheritDoc}
+     *
+     * Checks for existing Firebase authentication state.
+     */
+    @Override
+    public Task<AuthResult> checkExistingAuthentication() {
+        TaskCompletionSource<AuthResult> taskCompletionSource = new TaskCompletionSource<>();
+
+        try {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser != null && getRememberMePreference()) {
+                User user = convertFirebaseUserToUser(firebaseUser);
+                taskCompletionSource.setResult(new AuthResult(user));
+            } else {
+                taskCompletionSource.setResult(null);
+            }
+        } catch (Exception e) {
+            taskCompletionSource.setException(e);
+        }
+
+        return taskCompletionSource.getTask();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Performs automatic login for already authenticated users.
+     */
+    @Override
+    public Task<AuthResponse<AuthResult>> autoLogin() {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null && getRememberMePreference()) {
+            return firebaseUser.reload().continueWith(reloadTask -> {
+                if (reloadTask.isSuccessful()) {
+                    User user = convertFirebaseUserToUser(firebaseUser);
+                    return new AuthResponse.Success<>(new AuthResult(user));
+                } else {
+                    return new AuthResponse.Error<>("Session expired. Please login again.",
+                            reloadTask.getException());
+                }
+            });
+        } else {
+            return Tasks.forResult(new AuthResponse.Error<>("No saved authentication found", null));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Saves the remember me preference to SharedPreferences.
+     */
+    @Override
+    public void setRememberMePreference(boolean rememberMe) {
+        sharedPreferences.edit()
+                .putBoolean(PREF_REMEMBER_ME, rememberMe)
+                .apply();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Gets the remember me preference from SharedPreferences.
+     */
+    @Override
+    public boolean getRememberMePreference() {
+        return sharedPreferences.getBoolean(PREF_REMEMBER_ME, true); // Default to true
+    }
+
+    /**
+     * Override the existing signOut method to clear remember me preference
+     */
+    @Override
+    public void signOut() {
+        firebaseAuth.signOut();
+        setRememberMePreference(false); // Clear remember me on manual logout
     }
 
     /**
@@ -125,16 +211,6 @@ public class AuthRepositoryImpl implements AuthRepository {
         } else {
             return exception.getMessage() != null ? exception.getMessage() : defaultMessage;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Signs out the current user from Firebase Authentication.
-     */
-    @Override
-    public void signOut() {
-        firebaseAuth.signOut();
     }
 
     /**

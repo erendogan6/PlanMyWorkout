@@ -69,4 +69,31 @@ public interface AuthRepository {
      * @return Task that resolves to true if the user has completed onboarding, false otherwise
      */
     Task<Boolean> hasCompletedOnboarding();
+    /**
+     * Checks for existing authentication and returns user data if authenticated.
+     *
+     * @return Task that resolves to AuthResult if user is authenticated, null otherwise
+     */
+    Task<AuthResult> checkExistingAuthentication();
+
+    /**
+     * Performs automatic login for already authenticated users.
+     *
+     * @return Task that resolves to AuthResponse containing user information
+     */
+    Task<AuthResponse<AuthResult>> autoLogin();
+
+    /**
+     * Saves remember me preference.
+     *
+     * @param rememberMe true to remember login, false otherwise
+     */
+    void setRememberMePreference(boolean rememberMe);
+
+    /**
+     * Gets remember me preference.
+     *
+     * @return true if remember me is enabled, false otherwise
+     */
+    boolean getRememberMePreference();
 }

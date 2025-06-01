@@ -27,11 +27,6 @@ public interface ProfileRepository {
     Task<WorkoutStats> getWorkoutStats();
 
     /**
-     * Updates the user's profile information.
-     */
-    Task<Void> updateUserProfile(UserProfile userProfile);
-
-    /**
      * Signs out the current user.
      */
     Task<Void> logout();
