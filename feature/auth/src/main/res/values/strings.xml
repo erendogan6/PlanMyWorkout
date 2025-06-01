@@ -19,4 +19,10 @@
     <string name="full_name">Full Name</string>
     <string name="enter_your_full_name">Enter your full name</string>
     <string name="already_have_account">Already have an account?</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="forgot_password_title">Reset Password</string>
+    <string name="forgot_password_subtitle">Enter your email address and we\'ll send you a link to reset your password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="back_to_login">Back to Login</string>
 </resources>
