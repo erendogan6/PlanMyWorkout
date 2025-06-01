@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.erendogan6.planmyworkout.feature.home.data.HomeRepository;
-import com.erendogan6.planmyworkout.feature.home.model.WorkoutPlan;
+import com.erendogan6.planmyworkout.core.model.WorkoutPlan;
 
 import javax.inject.Inject;
 

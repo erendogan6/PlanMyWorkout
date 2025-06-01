@@ -1,7 +1,7 @@
 package com.erendogan6.planmyworkout.feature.home.data;
 
 import com.erendogan6.planmyworkout.core.util.FirestoreManager;
-import com.erendogan6.planmyworkout.feature.home.model.WorkoutPlan;
+import com.erendogan6.planmyworkout.core.model.WorkoutPlan;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
