@@ -1,5 +1,6 @@
 package com.erendogan6.planmyworkout.feature.workout.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
-
 import com.erendogan6.planmyworkout.feature.workout.adapter.ExerciseLogAdapter;
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseHistoryBinding;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
@@ -22,6 +22,9 @@ import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseHistoryVie
 
 import java.util.ArrayList;
 
+import coil.Coil;
+import coil.request.ImageRequest;
+import coil.target.Target;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
@@ -30,7 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLogAdapter.OnLogSelectedListener {
 
-    private FragmentExerciseHistoryBinding binding;
+    FragmentExerciseHistoryBinding binding;
     private ExerciseHistoryViewModel viewModel;
     private ExerciseLogAdapter adapter;
 
@@ -86,6 +89,41 @@ public class ExerciseHistoryFragment extends BaseFragment implements ExerciseLog
                 } else {
                     binding.tvMuscleGroup.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        // Observe exercise image
+        viewModel.getExerciseImageUrl().observe(getViewLifecycleOwner(), imageUrl -> {
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                ImageRequest request = new ImageRequest.Builder(requireContext())
+                        .data(imageUrl)
+                        .target(new Target() {
+                            @Override
+                            public void onStart(@Nullable Drawable placeholder) {
+                                binding.ivExerciseImage.setImageDrawable(placeholder);
+                            }
+
+                            @Override
+                            public void onSuccess(@NonNull Drawable result) {
+                                binding.ivExerciseImage.setImageDrawable(result);
+                                binding.imageLoadingOverlay.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError(@Nullable Drawable error) {
+                                binding.ivExerciseImage.setImageDrawable(error);
+                                binding.imageLoadingOverlay.setVisibility(View.GONE);
+                            }
+                        })
+                        .placeholder(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise)
+                        .error(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise)
+                        .crossfade(true)
+                        .build();
+
+                Coil.imageLoader(requireContext()).enqueue(request);
+            } else {
+                binding.imageLoadingOverlay.setVisibility(View.GONE);
+                binding.ivExerciseImage.setImageResource(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise);
             }
         });
 

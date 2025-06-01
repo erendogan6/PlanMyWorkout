@@ -1,10 +1,14 @@
 package com.erendogan6.planmyworkout.feature.workout.repository;
 
+import com.erendogan6.planmyworkout.core.util.ConfigManager;
 import com.erendogan6.planmyworkout.core.util.FirestoreManager;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseLog;
 import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.model.WorkoutPlan;
+import com.erendogan6.planmyworkout.feature.workout.model.PexelsPhotoResponse;
+import com.erendogan6.planmyworkout.feature.workout.service.PexelsService;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -21,6 +25,10 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Implementation of the WorkoutRepository interface.
  * This class handles the communication with Firestore for workout operations.
@@ -29,11 +37,18 @@ import javax.inject.Singleton;
 public class WorkoutRepositoryImpl implements WorkoutRepository {
     private final FirebaseFirestore firestore;
     private final FirestoreManager firestoreManager;
-
+    private final PexelsService pexelsService;
+    private final ConfigManager configManager;
     @Inject
-    public WorkoutRepositoryImpl(FirebaseFirestore firestore, FirestoreManager firestoreManager) {
+    public WorkoutRepositoryImpl(
+            FirebaseFirestore firestore,
+            FirestoreManager firestoreManager,
+            PexelsService pexelsService,
+            ConfigManager configManager) {
         this.firestore = firestore;
         this.firestoreManager = firestoreManager;
+        this.pexelsService = pexelsService;
+        this.configManager = configManager;
     }
 
     /**
@@ -446,5 +461,52 @@ public class WorkoutRepositoryImpl implements WorkoutRepository {
         });
     }
 
+    /**
+     * Get exercise image from Pexels API.
+     *
+     * @param exerciseName The name of the exercise
+     * @return Task with the image URL
+     */
+    @Override
+    public Task<String> getExerciseImage(String exerciseName) {
+        TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
 
+        try {
+            if (!configManager.isPexelsApiKeyAvailable()) {
+                taskCompletionSource.setResult(null);
+                return taskCompletionSource.getTask();
+            }
+
+            String apiKey = configManager.getPexelsApiKey();
+
+            pexelsService.searchPhotos(apiKey, exerciseName + " exercise", 1)
+                    .enqueue(new Callback<>() {
+                        @Override
+                        public void onResponse(Call<PexelsPhotoResponse> call, Response<PexelsPhotoResponse> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                PexelsPhotoResponse pexelsResponse = response.body();
+
+                                if (pexelsResponse.getPhotos() != null && !pexelsResponse.getPhotos().isEmpty()) {
+                                    String imageUrl = pexelsResponse.getPhotos().get(0).getSrc().getOriginal();
+                                    taskCompletionSource.setResult(imageUrl);
+                                } else {
+                                    taskCompletionSource.setResult(null);
+                                }
+                            } else {
+                                taskCompletionSource.setResult(null);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<PexelsPhotoResponse> call, Throwable t) {
+                            taskCompletionSource.setResult(null);
+                        }
+                    });
+
+        } catch (Exception e) {
+            taskCompletionSource.setResult(null);
+        }
+
+        return taskCompletionSource.getTask();
+    }
 }
