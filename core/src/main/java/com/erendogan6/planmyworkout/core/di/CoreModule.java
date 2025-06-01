@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import javax.inject.Singleton;
 
@@ -48,5 +48,11 @@ public class CoreModule {
     @Singleton
     public SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {
         return context.getSharedPreferences("plan_my_workout_prefs", Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    @Singleton
+    public FirebaseRemoteConfig provideFirebaseRemoteConfig() {
+        return FirebaseRemoteConfig.getInstance();
     }
 }

@@ -79,4 +79,12 @@ public interface WorkoutRepository {
      * @return Task indicating success or failure
      */
     Task<Void> updateExerciseLog(String planId, String exerciseId, String logId, double weight, int reps, String notes);
+
+    /**
+     * Get exercise image from Pexels API.
+     *
+     * @param exerciseName The name of the exercise
+     * @return Task with the image URL
+     */
+    Task<String> getExerciseImage(String exerciseName);
 }
