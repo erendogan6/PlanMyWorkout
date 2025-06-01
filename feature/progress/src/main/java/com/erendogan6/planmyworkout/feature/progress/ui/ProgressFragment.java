@@ -129,8 +129,11 @@ public class ProgressFragment extends BaseFragment {
 
     private void setupRecyclerView() {
         exerciseDetailAdapter = new ExerciseDetailAdapter(new ArrayList<>());
-        binding.rvExerciseDetails.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        binding.rvExerciseDetails.setLayoutManager(layoutManager);
         binding.rvExerciseDetails.setAdapter(exerciseDetailAdapter);
+        binding.rvExerciseDetails.setNestedScrollingEnabled(false);
+        binding.rvExerciseDetails.setHasFixedSize(false);
     }
 
     private void setupListeners() {
