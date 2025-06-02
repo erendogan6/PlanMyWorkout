@@ -1,5 +1,7 @@
 package com.erendogan6.planmyworkout.feature.onboarding.di;
 
+import com.erendogan6.planmyworkout.feature.onboarding.repository.ExerciseTemplateRepository;
+import com.erendogan6.planmyworkout.feature.onboarding.repository.ExerciseTemplateRepositoryImpl;
 import com.erendogan6.planmyworkout.feature.onboarding.repository.WorkoutPlanRepository;
 import com.erendogan6.planmyworkout.feature.onboarding.repository.WorkoutPlanRepositoryImpl;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,6 +19,12 @@ import dagger.hilt.components.SingletonComponent;
 @Module
 @InstallIn(SingletonComponent.class)
 public class OnboardingModule {
+
+    @Provides
+    @Singleton
+    public ExerciseTemplateRepository provideExerciseTemplateRepository() {
+        return new ExerciseTemplateRepositoryImpl();
+    }
 
     @Provides
     @Singleton

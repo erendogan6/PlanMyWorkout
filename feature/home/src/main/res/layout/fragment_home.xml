@@ -185,7 +185,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvMyWorkoutsTitle" />
 
-        <!-- Create a Workout Plan Section -->
+        <!--
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutCreateHeader"
             android:layout_width="0dp"
@@ -223,7 +223,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Create Options (Collapsible) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutCreateOptions"
             android:layout_width="0dp"
@@ -235,7 +234,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutCreateHeader">
 
-            <!-- Ready-Made Plan Button -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnReadyMadePlan"
                 android:layout_width="match_parent"
@@ -280,7 +278,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Build Your Own Plan Button -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnBuildOwnPlan"
                 android:layout_width="match_parent"
@@ -328,7 +325,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Generate with AI Button -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnGenerateAI"
                 android:layout_width="match_parent"
@@ -374,9 +370,9 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </com.google.android.material.card.MaterialCardView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
