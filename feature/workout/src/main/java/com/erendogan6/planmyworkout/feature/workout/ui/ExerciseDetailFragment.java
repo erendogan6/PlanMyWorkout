@@ -70,7 +70,7 @@ public class ExerciseDetailFragment extends BaseFragment {
                 if (isEdit && !logId.isEmpty()) {
                     viewModel.setEditMode(true, logId);
                     binding.tvTitle.setText("Edit Log");
-                    binding.etWeight.setText(String.format(Locale.getDefault(), "%.1f", weight));
+                    binding.etWeight.setText(String.format(Locale.US, "%.1f", weight));
                     binding.etReps.setText(String.valueOf(reps));
                     binding.etNotes.setText(notes);
                     binding.layoutLastTry.setVisibility(View.GONE);
@@ -100,8 +100,7 @@ public class ExerciseDetailFragment extends BaseFragment {
         // Observe latest log
         viewModel.getLatestLog().observe(getViewLifecycleOwner(), log -> {
             if (log != null) {
-                // Set last try text with formatted date
-                binding.tvLastTry.setText(String.format("Last Try: %.1f kg × %d on %s",
+                binding.tvLastTry.setText(String.format(Locale.US, "Last Try: %.1f kg × %d on %s",
                         log.getWeight(), log.getReps(), log.getFormattedDate()));
 
                 // Show notes if available
@@ -112,8 +111,7 @@ public class ExerciseDetailFragment extends BaseFragment {
                     binding.tvLastNotes.setVisibility(View.GONE);
                 }
 
-                // Pre-fill the input fields with the last values
-                binding.etWeight.setText(String.format("%.1f", log.getWeight()));
+                binding.etWeight.setText(String.format(Locale.US, "%.1f", log.getWeight()));
                 binding.etReps.setText(String.valueOf(log.getReps()));
 
                 // Show the last try section
@@ -188,7 +186,7 @@ public class ExerciseDetailFragment extends BaseFragment {
         }
 
         try {
-            double weight = Double.parseDouble(weightStr);
+            double weight = Double.parseDouble(weightStr.replace(",", "."));
             int reps = Integer.parseInt(repsStr);
 
             // Save or update the exercise log based on mode

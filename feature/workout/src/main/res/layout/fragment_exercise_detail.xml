@@ -115,6 +115,7 @@
         android:background="@drawable/bg_input_field"
         android:gravity="center"
         android:hint="@string/zero_decimal"
+        android:digits="0123456789."
         android:inputType="numberDecimal"
         android:padding="16dp"
         android:textColor="@color/white"
