@@ -90,15 +90,6 @@ public class ProfileFragment extends BaseFragment {
             }
         });
 
-        // Observe workout statistics
-        viewModel.getWorkoutStats().observe(getViewLifecycleOwner(), stats -> {
-            if (stats != null) {
-                binding.tvTotalWorkouts.setText(String.valueOf(stats.getTotalWorkouts()));
-                binding.tvTotalExercises.setText(String.valueOf(stats.getTotalExercises()));
-                binding.tvConsecutiveDays.setText(String.valueOf(stats.getConsecutiveDays()));
-            }
-        });
-
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading) {
