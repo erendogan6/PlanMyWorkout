@@ -180,15 +180,15 @@ public class ExerciseHistoryFragment extends BaseFragment implements
                                 binding.imageLoadingOverlay.setVisibility(View.GONE);
                             }
                         })
-                        .placeholder(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise)
-                        .error(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise)
+                        .placeholder(com.erendogan6.planmyworkout.coreui.R.drawable.ic_placeholder_exercise)
+                        .error(com.erendogan6.planmyworkout.coreui.R.drawable.ic_placeholder_exercise)
                         .crossfade(true)
                         .build();
 
                 Coil.imageLoader(requireContext()).enqueue(request);
             } else {
                 binding.imageLoadingOverlay.setVisibility(View.GONE);
-                binding.ivExerciseImage.setImageResource(com.erendogan6.planmyworkout.coreui.R.drawable.placeholder_exercise);
+                binding.ivExerciseImage.setImageResource(com.erendogan6.planmyworkout.coreui.R.drawable.ic_placeholder_exercise);
             }
         });
 
