@@ -24,9 +24,6 @@ public class PlanMyWorkoutApplication extends Application {
                 .setMinimumFetchIntervalInSeconds(3600)
                 .build();
         remoteConfig.setConfigSettingsAsync(configSettings);
-
-        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults);
-
         remoteConfig.fetchAndActivate();
     }
 }
