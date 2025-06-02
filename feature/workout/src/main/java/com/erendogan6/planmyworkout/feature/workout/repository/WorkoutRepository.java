@@ -5,6 +5,7 @@ import com.erendogan6.planmyworkout.feature.workout.model.ExerciseWithProgress;
 import com.erendogan6.planmyworkout.feature.workout.model.WorkoutPlan;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +57,16 @@ public interface WorkoutRepository {
     Task<List<ExerciseLog>> getExerciseLogs(String planId, String exerciseId);
 
     /**
+     * Get a specific exercise log by ID.
+     *
+     * @param planId The plan ID
+     * @param exerciseId The exercise ID
+     * @param logId The log ID
+     * @return Task with the exercise log
+     */
+    Task<ExerciseLog> getExerciseLogById(String planId, String exerciseId, String logId);
+
+    /**
      * Save a new exercise log for a specific exercise in a plan.
      *
      * @param planId The plan ID
@@ -63,9 +74,10 @@ public interface WorkoutRepository {
      * @param weight The weight used
      * @param reps The number of reps completed
      * @param notes Optional notes about the exercise
+     * @param timestamp The date and time of the exercise
      * @return Task indicating success or failure
      */
-    Task<Void> saveExerciseLog(String planId, String exerciseId, double weight, int reps, String notes);
+    Task<Void> saveExerciseLog(String planId, String exerciseId, double weight, int reps, String notes, Date timestamp);
 
     /**
      * Update an existing exercise log.
@@ -76,9 +88,10 @@ public interface WorkoutRepository {
      * @param weight The weight used
      * @param reps The number of reps completed
      * @param notes Optional notes about the exercise
+     * @param timestamp The date and time of the exercise
      * @return Task indicating success or failure
      */
-    Task<Void> updateExerciseLog(String planId, String exerciseId, String logId, double weight, int reps, String notes);
+    Task<Void> updateExerciseLog(String planId, String exerciseId, String logId, double weight, int reps, String notes, Date timestamp);
 
     /**
      * Get exercise image from Pexels API.

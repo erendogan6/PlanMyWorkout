@@ -11,6 +11,9 @@ import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.GetLatestExerciseLogUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.SaveExerciseLogUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.UpdateExerciseLogUseCase;
+import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseLogByIdUseCase;
+
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -26,6 +29,7 @@ public class ExerciseDetailViewModel extends ViewModel {
     private final GetLatestExerciseLogUseCase getLatestExerciseLogUseCase;
     private final SaveExerciseLogUseCase saveExerciseLogUseCase;
     private final UpdateExerciseLogUseCase updateExerciseLogUseCase;
+    private final GetExerciseLogByIdUseCase getExerciseLogByIdUseCase;
     private final SavedStateHandle savedStateHandle;
     private final MutableLiveData<ExerciseWithProgress> exercise = new MutableLiveData<>();
     private final MutableLiveData<ExerciseLog> latestLog = new MutableLiveData<>();
@@ -33,21 +37,25 @@ public class ExerciseDetailViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isSaving = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<Date> selectedDateTime = new MutableLiveData<>();
 
     // Edit mode fields
     private boolean editMode = false;
     private String logId = "";
+
     @Inject
     public ExerciseDetailViewModel(
             GetExerciseUseCase getExerciseUseCase,
             GetLatestExerciseLogUseCase getLatestExerciseLogUseCase,
             SaveExerciseLogUseCase saveExerciseLogUseCase,
             UpdateExerciseLogUseCase updateExerciseLogUseCase,
+            GetExerciseLogByIdUseCase getExerciseLogByIdUseCase,
             SavedStateHandle savedStateHandle) {
         this.getExerciseUseCase = getExerciseUseCase;
         this.getLatestExerciseLogUseCase = getLatestExerciseLogUseCase;
         this.saveExerciseLogUseCase = saveExerciseLogUseCase;
         this.updateExerciseLogUseCase = updateExerciseLogUseCase;
+        this.getExerciseLogByIdUseCase = getExerciseLogByIdUseCase;
         this.savedStateHandle = savedStateHandle;
     }
 
@@ -73,6 +81,17 @@ public class ExerciseDetailViewModel extends ViewModel {
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    public LiveData<Date> getSelectedDateTime() {
+        return selectedDateTime;
+    }
+
+    /**
+     * Set the selected date and time for the exercise log.
+     */
+    public void setSelectedDateTime(Date dateTime) {
+        selectedDateTime.setValue(dateTime);
     }
 
     /**
@@ -130,9 +149,29 @@ public class ExerciseDetailViewModel extends ViewModel {
     }
 
     /**
+     * Load an existing exercise log by ID (for edit mode).
+     */
+    public void loadExistingLog(String planId, String exerciseId, String logId) {
+        isLoading.setValue(true);
+        getExerciseLogByIdUseCase.execute(planId, exerciseId, logId)
+                .addOnSuccessListener(log -> {
+                    if (log != null && log.getTimestamp() != null) {
+                        selectedDateTime.setValue(log.getTimestamp());
+                    } else {
+                        selectedDateTime.setValue(new Date()); // Fallback to current time
+                    }
+                    isLoading.setValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    selectedDateTime.setValue(new Date()); // Fallback to current time
+                    isLoading.setValue(false);
+                });
+    }
+
+    /**
      * Save a new exercise log to Firestore.
      */
-    public void saveExerciseLog(double weight, int reps, String notes) {
+    public void saveExerciseLog(double weight, int reps, String notes, Date timestamp) {
         String exerciseId = savedStateHandle.get("exerciseId");
         String planId = savedStateHandle.get("planId");
 
@@ -152,11 +191,16 @@ public class ExerciseDetailViewModel extends ViewModel {
             return;
         }
 
+        if (timestamp == null) {
+            errorMessage.setValue("Please select date and time");
+            return;
+        }
+
         // Show loading state
         isSaving.setValue(true);
 
         // Save to Firestore
-        saveExerciseLogUseCase.execute(planId, exerciseId, weight, reps, notes)
+        saveExerciseLogUseCase.execute(planId, exerciseId, weight, reps, notes, timestamp)
                 .addOnSuccessListener(aVoid -> {
                     saveSuccess.setValue(true);
                     isSaving.setValue(false);
@@ -172,7 +216,7 @@ public class ExerciseDetailViewModel extends ViewModel {
     /**
      * Update an existing exercise log in Firestore.
      */
-    public void updateExerciseLog(double weight, int reps, String notes) {
+    public void updateExerciseLog(double weight, int reps, String notes, Date timestamp) {
         String exerciseId = savedStateHandle.get("exerciseId");
         String planId = savedStateHandle.get("planId");
 
@@ -197,11 +241,16 @@ public class ExerciseDetailViewModel extends ViewModel {
             return;
         }
 
+        if (timestamp == null) {
+            errorMessage.setValue("Please select date and time");
+            return;
+        }
+
         // Show loading state
         isSaving.setValue(true);
 
         // Update in Firestore
-        updateExerciseLogUseCase.execute(planId, exerciseId, logId, weight, reps, notes)
+        updateExerciseLogUseCase.execute(planId, exerciseId, logId, weight, reps, notes, timestamp)
                 .addOnSuccessListener(aVoid -> {
                     saveSuccess.setValue(true);
                     isSaving.setValue(false);

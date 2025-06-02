@@ -153,6 +153,7 @@ public class ExerciseHistoryFragment extends BaseFragment implements
         viewModel.getActionMessage().observe(getViewLifecycleOwner(), message -> {
             if (message != null && !message.isEmpty()) {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                viewModel.clearActionMessage();
             }
         });
 

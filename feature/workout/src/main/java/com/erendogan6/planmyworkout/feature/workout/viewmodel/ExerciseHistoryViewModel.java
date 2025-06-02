@@ -13,6 +13,7 @@ import com.erendogan6.planmyworkout.feature.workout.usecase.GetExerciseImageUseC
 import com.erendogan6.planmyworkout.feature.workout.usecase.SaveExerciseLogUseCase;
 import com.erendogan6.planmyworkout.feature.workout.usecase.DeleteExerciseLogUseCase;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -77,6 +78,10 @@ public class ExerciseHistoryViewModel extends ViewModel {
 
     public LiveData<String> getActionMessage() {
         return actionMessage;
+    }
+
+    public void clearActionMessage() {
+        actionMessage.setValue(null);
     }
 
     public String getExerciseId() {
@@ -177,14 +182,15 @@ public class ExerciseHistoryViewModel extends ViewModel {
     }
 
     /**
-     * Duplicate an exercise log (create new with same data).
+     * Duplicate an exercise log (create new with same data but current timestamp).
      */
     public void duplicateLog(ExerciseLog log) {
         String exerciseId = getExerciseId();
         String planId = getPlanId();
 
         if (exerciseId != null && planId != null) {
-            saveExerciseLogUseCase.execute(planId, exerciseId, log.getWeight(), log.getReps(), log.getNotes())
+            Date currentTimestamp = new Date();
+            saveExerciseLogUseCase.execute(planId, exerciseId, log.getWeight(), log.getReps(), log.getNotes(), currentTimestamp)
                     .addOnSuccessListener(aVoid -> {
                         actionMessage.setValue("Log duplicated successfully");
                         refreshLogs(); // Reload logs after duplication
