@@ -21,6 +21,8 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<String> userName = new MutableLiveData<>();
     private final MutableLiveData<WorkoutPlan> currentPlan = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> planUpdateSuccess = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private String currentPlanId;
 
     @Inject
@@ -58,6 +60,55 @@ public class HomeViewModel extends ViewModel {
     }
 
     /**
+     * Update the current plan's name.
+     */
+    public void updatePlanName(String newName) {
+        if (currentPlanId == null || newName == null || newName.trim().isEmpty()) {
+            errorMessage.setValue("Invalid plan name");
+            return;
+        }
+
+        isLoading.setValue(true);
+        homeRepository.updatePlanName(currentPlanId, newName.trim())
+                .addOnSuccessListener(aVoid -> {
+                    WorkoutPlan plan = currentPlan.getValue();
+                    if (plan != null) {
+                        plan.setName(newName.trim());
+                        currentPlan.setValue(plan);
+                    }
+                    planUpdateSuccess.setValue(true);
+                    isLoading.setValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.setValue("Failed to update plan name: " + e.getMessage());
+                    isLoading.setValue(false);
+                });
+    }
+
+    /**
+     * Delete the current plan.
+     */
+    public void deletePlan() {
+        if (currentPlanId == null) {
+            errorMessage.setValue("No plan to delete");
+            return;
+        }
+
+        isLoading.setValue(true);
+        homeRepository.deletePlan(currentPlanId)
+                .addOnSuccessListener(aVoid -> {
+                    currentPlan.setValue(null);
+                    currentPlanId = null;
+                    isLoading.setValue(false);
+                    planUpdateSuccess.setValue(true);
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.setValue("Failed to delete plan: " + e.getMessage());
+                    isLoading.setValue(false);
+                });
+    }
+
+    /**
      * Get the user's name LiveData.
      *
      * @return LiveData with the user's name
@@ -91,5 +142,23 @@ public class HomeViewModel extends ViewModel {
      */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    /**
+     * Get the plan update success LiveData.
+     *
+     * @return LiveData with the plan update success state
+     */
+    public LiveData<Boolean> getPlanUpdateSuccess() {
+        return planUpdateSuccess;
+    }
+
+    /**
+     * Get the error message LiveData.
+     *
+     * @return LiveData with error messages
+     */
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
     }
 }
