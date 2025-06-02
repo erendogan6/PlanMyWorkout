@@ -64,8 +64,9 @@ public class RegisterFragment extends BaseFragment {
 
                 if (result.isSuccess()) {
                     // After registration, always navigate to onboarding
+                    Toast.makeText(requireContext(), "Registration successful! Please Approve Your Mail Address", Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(requireView())
-                            .navigate(R.id.action_registerFragment_to_onboarding_navigation);
+                            .navigate(R.id.action_registerFragment_to_loginFragment);
                 } else if (result.isError()) {
                     // Show error message
                     Toast.makeText(requireContext(), result.getMessage(), Toast.LENGTH_SHORT).show();

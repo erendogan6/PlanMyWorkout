@@ -81,15 +81,17 @@ public class AuthRepositoryImpl implements AuthRepository {
         if (firebaseUser != null && getRememberMePreference()) {
             return firebaseUser.reload().continueWith(reloadTask -> {
                 if (reloadTask.isSuccessful()) {
+                    if (!firebaseUser.isEmailVerified()) {
+                        return new AuthResponse.Error<>("Please Approve Your Mail Address.", null);
+                    }
                     User user = convertFirebaseUserToUser(firebaseUser);
                     return new AuthResponse.Success<>(new AuthResult(user));
                 } else {
-                    return new AuthResponse.Error<>("Session expired. Please login again.",
-                            reloadTask.getException());
+                    return new AuthResponse.Error<>("Session Time Expired", reloadTask.getException());
                 }
             });
         } else {
-            return Tasks.forResult(new AuthResponse.Error<>("No saved authentication found", null));
+            return Tasks.forResult(new AuthResponse.Error<>("Can't found account", null));
         }
     }
 
@@ -136,6 +138,9 @@ public class AuthRepositoryImpl implements AuthRepository {
                     if (task.isSuccessful() && task.getResult() != null) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         if (firebaseUser != null) {
+                            if (!firebaseUser.isEmailVerified()) {
+                                return new AuthResponse.Error<>("Please Approve Your Account", null);
+                            }
                             User user = convertFirebaseUserToUser(firebaseUser);
                             return new AuthResponse.Success<>(new AuthResult(user));
                         } else {
@@ -160,6 +165,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                     if (task.isSuccessful() && task.getResult() != null) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         if (firebaseUser != null) {
+                            firebaseUser.sendEmailVerification();
                             User user = convertFirebaseUserToUser(firebaseUser);
                             return new AuthResponse.Success<>(new AuthResult(user));
                         } else {
