@@ -2,6 +2,7 @@ package com.erendogan6.planmyworkout.feature.onboarding.service;
 
 import android.util.Log;
 
+import com.erendogan6.planmyworkout.core.util.ConfigManager;
 import com.erendogan6.planmyworkout.feature.onboarding.model.AiWorkoutPlanRequest;
 import com.erendogan6.planmyworkout.feature.onboarding.model.AiWorkoutPlanResponse;
 import com.google.ai.client.generativeai.GenerativeModel;
@@ -25,13 +26,22 @@ import javax.inject.Singleton;
 public class AiWorkoutPlanService {
 
     private static final String TAG = "AiWorkoutPlanService";
-    private static final String API_KEY = "AIzaSyBiShiH1BYQcx0m-84vXqbgy_XquzNZo-Q";
     private static final String MODEL_NAME = "gemini-2.0-flash";
+    private final ConfigManager configManager;
     private final GenerativeModelFutures model;
 
     @Inject
-    public AiWorkoutPlanService() {
-        GenerativeModel gm = new GenerativeModel(MODEL_NAME, API_KEY);
+    public AiWorkoutPlanService(ConfigManager configManager) {
+        this.configManager = configManager;
+
+        if (!configManager.isGeminiApiKeyAvailable()) {
+            Log.e(TAG, "Gemini API key not available from remote config!");
+            throw new IllegalStateException("Gemini API key not configured");
+        }
+
+        String apiKey = configManager.getGeminiApiKey();
+
+        GenerativeModel gm = new GenerativeModel(MODEL_NAME, apiKey);
         this.model = GenerativeModelFutures.from(gm);
     }
 
