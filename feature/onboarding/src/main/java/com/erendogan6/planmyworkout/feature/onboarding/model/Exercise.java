@@ -104,4 +104,8 @@ public class Exercise implements Serializable {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
+    public int getReps() {
+        return repsPerSet;
+    }
 }

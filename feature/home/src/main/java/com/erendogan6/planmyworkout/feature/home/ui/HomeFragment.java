@@ -60,26 +60,26 @@ public class HomeFragment extends BaseFragment {
         });
 
         // Set up create workout plan section
-        binding.layoutCreateHeader.setOnClickListener(v -> {
-            // Toggle visibility of create options
-            boolean isVisible = binding.layoutCreateOptions.getVisibility() == View.VISIBLE;
-            binding.layoutCreateOptions.setVisibility(isVisible ? View.GONE : View.VISIBLE);
-            // Rotate arrow based on expanded state
-            binding.ivExpandArrow.setRotation(isVisible ? 0 : 180);
-        });
-
-        // Set up create options buttons
-        binding.btnReadyMadePlan.setOnClickListener(v ->
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_homeFragment_to_readyMadePlansFragment));
-
-        binding.btnBuildOwnPlan.setOnClickListener(v ->
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_homeFragment_to_createPlanFragment));
-
-        binding.btnGenerateAI.setOnClickListener(v ->
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_homeFragment_to_aiGeneratePlanFragment));
+//        binding.layoutCreateHeader.setOnClickListener(v -> {
+//            // Toggle visibility of create options
+//            boolean isVisible = binding.layoutCreateOptions.getVisibility() == View.VISIBLE;
+//            binding.layoutCreateOptions.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+//            // Rotate arrow based on expanded state
+//            binding.ivExpandArrow.setRotation(isVisible ? 0 : 180);
+//        });
+//
+//        // Set up create options buttons
+//        binding.btnReadyMadePlan.setOnClickListener(v ->
+//                Navigation.findNavController(requireView())
+//                        .navigate(R.id.action_homeFragment_to_readyMadePlansFragment));
+//
+//        binding.btnBuildOwnPlan.setOnClickListener(v ->
+//                Navigation.findNavController(requireView())
+//                        .navigate(R.id.action_homeFragment_to_createPlanFragment));
+//
+//        binding.btnGenerateAI.setOnClickListener(v ->
+//                Navigation.findNavController(requireView())
+//                        .navigate(R.id.action_homeFragment_to_aiGeneratePlanFragment));
     }
 
     private void observeViewModel() {
