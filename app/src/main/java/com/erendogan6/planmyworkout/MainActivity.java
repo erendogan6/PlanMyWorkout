@@ -1,7 +1,11 @@
 package com.erendogan6.planmyworkout;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavGraph;
@@ -27,6 +31,17 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, com.erendogan6.planmyworkout.coreui.R.color.background_dark));
+
+            // Dark content for status bar
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                window.getDecorView().setSystemUiVisibility(0);
+            }
+        }
 
         // Set up the NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()

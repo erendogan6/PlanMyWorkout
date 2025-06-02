@@ -53,8 +53,36 @@
         android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.AiGeneratePlanFragment"
         android:label="AI Generate Plan"
         tools:layout="@layout/fragment_ai_generate_plan">
+        <!-- AI'dan plan preview'a git -->
         <action
-            android:id="@+id/action_aiGeneratePlanFragment_to_planDetailFragment"
+            android:id="@+id/action_aiGeneratePlanFragment_to_aiPlanPreviewFragment"
+            app:destination="@id/aiPlanPreviewFragment" />
+    </fragment>
+
+    <!-- Yeni AI Plan Preview Fragment -->
+    <fragment
+        android:id="@+id/aiPlanPreviewFragment"
+        android:name="com.erendogan6.planmyworkout.feature.onboarding.ui.AiPlanPreviewFragment"
+        android:label="AI Plan Preview"
+        tools:layout="@layout/fragment_ai_plan_preview">
+
+        <!-- Preview'dan geri AI generate'e dön (yeni plan isterse) -->
+        <action
+            android:id="@+id/action_aiPlanPreviewFragment_to_aiGeneratePlanFragment"
+            app:destination="@id/aiGeneratePlanFragment"
+            app:popUpTo="@id/aiGeneratePlanFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Plan'ı kabul ederse direkt ana ekrana git -->
+        <action
+            android:id="@+id/action_aiPlanPreviewFragment_to_bottom_nav_graph"
+            app:destination="@id/bottom_nav_graph"
+            app:popUpTo="@id/onboardingSelectionFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Veya plan detayına git (opsiyonel) -->
+        <action
+            android:id="@+id/action_aiPlanPreviewFragment_to_planDetailFragment"
             app:destination="@id/planDetailFragment" />
     </fragment>
 

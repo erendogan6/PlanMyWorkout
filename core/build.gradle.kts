@@ -42,6 +42,21 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.config)
 
+    api(libs.converter.gson)
+    api(libs.generativeai)
+
+    // Retrofit
+    api(libs.retrofit)
+
+    // OkHttp
+    api(libs.okhttp)
+    api(libs.logging.interceptor)
+
+    // Coil
+    api(libs.coil)
+
+    api(libs.guava)
+
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
