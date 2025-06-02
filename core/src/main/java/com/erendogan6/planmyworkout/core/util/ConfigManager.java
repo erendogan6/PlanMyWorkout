@@ -9,6 +9,7 @@ public class ConfigManager {
 
     private final FirebaseRemoteConfig remoteConfig;
     private String cachedPexelsApiKey;
+    private String cachedGeminiApiKey;
 
     @Inject
     public ConfigManager(FirebaseRemoteConfig remoteConfig) {
@@ -26,10 +27,36 @@ public class ConfigManager {
     }
 
     /**
+     * Get Gemini API key with caching
+     */
+    public String getGeminiApiKey() {
+        if (cachedGeminiApiKey == null) {
+            cachedGeminiApiKey = remoteConfig.getString("GEMINI_API_KEY");
+        }
+        return cachedGeminiApiKey;
+    }
+
+    /**
      * Check if Pexels API key is available
      */
     public boolean isPexelsApiKeyAvailable() {
         String apiKey = getPexelsApiKey();
-        return apiKey != null && !apiKey.trim().isEmpty();
+        return apiKey != null && !apiKey.trim().isEmpty() && !apiKey.equals("default_value");
+    }
+
+    /**
+     * Check if Gemini API key is available
+     */
+    public boolean isGeminiApiKeyAvailable() {
+        String apiKey = getGeminiApiKey();
+        return apiKey != null && !apiKey.trim().isEmpty() && !apiKey.equals("default_value");
+    }
+
+    /**
+     * Force refresh cache (call after remote config fetch)
+     */
+    public void refreshCache() {
+        cachedPexelsApiKey = null;
+        cachedGeminiApiKey = null;
     }
 }

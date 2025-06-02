@@ -1,8 +1,12 @@
 package com.erendogan6.planmyworkout.feature.onboarding.di;
 
+import com.erendogan6.planmyworkout.core.util.ConfigManager;
 import com.erendogan6.planmyworkout.feature.onboarding.repository.AiWorkoutRepository;
+import com.erendogan6.planmyworkout.feature.onboarding.repository.WorkoutPlanRepository;
 import com.erendogan6.planmyworkout.feature.onboarding.service.AiWorkoutPlanService;
 import com.erendogan6.planmyworkout.feature.onboarding.usecase.GenerateAiWorkoutPlanUseCase;
+import com.erendogan6.planmyworkout.feature.onboarding.usecase.SaveAiWorkoutPlanUseCase;
+import com.google.firebase.auth.FirebaseAuth;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,8 +21,10 @@ public class AiModule {
 
     @Provides
     @Singleton
-    public AiWorkoutPlanService provideAiWorkoutPlanService() {
-        return new AiWorkoutPlanService();
+    public AiWorkoutPlanService provideAiWorkoutPlanService(
+            ConfigManager configManager
+    ) {
+        return new AiWorkoutPlanService(configManager);
     }
 
     @Provides
