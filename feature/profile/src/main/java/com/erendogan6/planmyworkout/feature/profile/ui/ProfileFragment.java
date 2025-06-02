@@ -53,11 +53,6 @@ public class ProfileFragment extends BaseFragment {
                     .navigate(R.id.action_profileFragment_to_settingsFragment);
         });
 
-        // Workout history
-        binding.layoutWorkoutHistory.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Workout history coming soon", Toast.LENGTH_SHORT).show();
-        });
-
         // Change plan
         binding.layoutChangePlan.setOnClickListener(v -> {
             Navigation.findNavController(requireView())
