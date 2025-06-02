@@ -1,5 +1,7 @@
 package com.erendogan6.planmyworkout.feature.workout.ui;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -16,7 +21,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
-
 import com.erendogan6.planmyworkout.feature.workout.databinding.FragmentExerciseDetailBinding;
 import com.erendogan6.planmyworkout.feature.workout.viewmodel.ExerciseDetailViewModel;
 
@@ -30,6 +34,8 @@ public class ExerciseDetailFragment extends BaseFragment {
 
     private FragmentExerciseDetailBinding binding;
     private ExerciseDetailViewModel viewModel;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @Nullable
     @Override
@@ -50,6 +56,9 @@ public class ExerciseDetailFragment extends BaseFragment {
             NavController navController = Navigation.findNavController(requireView());
             navController.popBackStack();
         });
+
+        // Set up date and time pickers
+        setupDateTimePickers();
 
         // Get arguments
         if (getArguments() != null) {
@@ -74,10 +83,14 @@ public class ExerciseDetailFragment extends BaseFragment {
                     binding.etReps.setText(String.valueOf(reps));
                     binding.etNotes.setText(notes);
                     binding.layoutLastTry.setVisibility(View.GONE);
+
+                    // Load the existing log to get its timestamp
+                    viewModel.loadExistingLog(planId, exerciseId, logId);
                 } else {
-                    // In create mode, load the latest log for reference
+                    // In create mode, load the latest log for reference and set current time
                     viewModel.loadLatestLog();
                     binding.tvTitle.setText("Add New Log");
+                    viewModel.setSelectedDateTime(new Date()); // Set current time as default
                 }
             }
         }
@@ -89,11 +102,78 @@ public class ExerciseDetailFragment extends BaseFragment {
         observeViewModel();
     }
 
+    private void setupDateTimePickers() {
+        // Date picker
+        binding.btnSelectDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            Date selectedDate = viewModel.getSelectedDateTime().getValue();
+            if (selectedDate != null) {
+                calendar.setTime(selectedDate);
+            }
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    requireContext(),
+                    (view, year, month, dayOfMonth) -> {
+                        Calendar newDate = Calendar.getInstance();
+                        Date currentSelected = viewModel.getSelectedDateTime().getValue();
+                        if (currentSelected != null) {
+                            newDate.setTime(currentSelected);
+                        }
+                        newDate.set(Calendar.YEAR, year);
+                        newDate.set(Calendar.MONTH, month);
+                        newDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        viewModel.setSelectedDateTime(newDate.getTime());
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            datePickerDialog.show();
+        });
+
+        // Time picker
+        binding.btnSelectTime.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            Date selectedDate = viewModel.getSelectedDateTime().getValue();
+            if (selectedDate != null) {
+                calendar.setTime(selectedDate);
+            }
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    requireContext(),
+                    (view, hourOfDay, minute) -> {
+                        Calendar newTime = Calendar.getInstance();
+                        Date currentSelected = viewModel.getSelectedDateTime().getValue();
+                        if (currentSelected != null) {
+                            newTime.setTime(currentSelected);
+                        }
+                        newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        newTime.set(Calendar.MINUTE, minute);
+                        newTime.set(Calendar.SECOND, 0);
+                        newTime.set(Calendar.MILLISECOND, 0);
+                        viewModel.setSelectedDateTime(newTime.getTime());
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true
+            );
+            timePickerDialog.show();
+        });
+    }
+
     private void observeViewModel() {
         // Observe exercise
         viewModel.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             if (exercise != null) {
                 binding.tvExerciseName.setText(exercise.getName());
+            }
+        });
+
+        // Observe selected date time
+        viewModel.getSelectedDateTime().observe(getViewLifecycleOwner(), dateTime -> {
+            if (dateTime != null) {
+                binding.tvSelectedDate.setText(dateFormat.format(dateTime));
+                binding.tvSelectedTime.setText(timeFormat.format(dateTime));
             }
         });
 
@@ -141,12 +221,16 @@ public class ExerciseDetailFragment extends BaseFragment {
                 binding.etWeight.setEnabled(false);
                 binding.etReps.setEnabled(false);
                 binding.etNotes.setEnabled(false);
+                binding.btnSelectDate.setEnabled(false);
+                binding.btnSelectTime.setEnabled(false);
             } else {
                 hideLoading();
                 binding.btnSave.setEnabled(true);
                 binding.etWeight.setEnabled(true);
                 binding.etReps.setEnabled(true);
                 binding.etNotes.setEnabled(true);
+                binding.btnSelectDate.setEnabled(true);
+                binding.btnSelectTime.setEnabled(true);
             }
         });
 
@@ -185,15 +269,21 @@ public class ExerciseDetailFragment extends BaseFragment {
             return;
         }
 
+        Date selectedDateTime = viewModel.getSelectedDateTime().getValue();
+        if (selectedDateTime == null) {
+            Toast.makeText(requireContext(), "Please select date and time", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             double weight = Double.parseDouble(weightStr.replace(",", "."));
             int reps = Integer.parseInt(repsStr);
 
             // Save or update the exercise log based on mode
             if (viewModel.isInEditMode()) {
-                viewModel.updateExerciseLog(weight, reps, notes);
+                viewModel.updateExerciseLog(weight, reps, notes, selectedDateTime);
             } else {
-                viewModel.saveExerciseLog(weight, reps, notes);
+                viewModel.saveExerciseLog(weight, reps, notes, selectedDateTime);
             }
         } catch (NumberFormatException e) {
             Toast.makeText(requireContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
