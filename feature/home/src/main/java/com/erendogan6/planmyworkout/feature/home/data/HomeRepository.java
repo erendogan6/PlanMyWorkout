@@ -3,6 +3,7 @@ package com.erendogan6.planmyworkout.feature.home.data;
 import com.erendogan6.planmyworkout.core.util.FirestoreManager;
 import com.erendogan6.planmyworkout.core.model.WorkoutPlan;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -148,5 +149,45 @@ public class HomeRepository {
                 });
     }
 
+    public String getCurrentUserId() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        return currentUser != null ? currentUser.getUid() : "";
+    }
+
+    public Task<Void> updatePlanName(String planId, String newName) {
+        return firestore.collection("users")
+                .document(getCurrentUserId())
+                .collection("plans")
+                .document(planId)
+                .update("name", newName);
+    }
+
+    public Task<Void> deletePlan(String planId) {
+        TaskCompletionSource<Void> taskSource = new TaskCompletionSource<>();
+
+        String userId = getCurrentUserId();
+        if (userId.isEmpty()) {
+            taskSource.setException(new IllegalStateException("User not authenticated"));
+            return taskSource.getTask();
+        }
+
+        // Delete the plan from user's plans collection
+        firestore.collection("users")
+                .document(userId)
+                .collection("plans")
+                .document(planId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Also remove from user's current plan if it was the current one
+                    firestore.collection("users")
+                            .document(userId)
+                            .update("currentPlanId", null)
+                            .addOnSuccessListener(aVoid2 -> taskSource.setResult(null))
+                            .addOnFailureListener(taskSource::setException);
+                })
+                .addOnFailureListener(taskSource::setException);
+
+        return taskSource.getTask();
+    }
 
 }

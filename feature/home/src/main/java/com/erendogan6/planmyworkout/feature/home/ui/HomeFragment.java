@@ -1,9 +1,12 @@
 package com.erendogan6.planmyworkout.feature.home.ui;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -13,10 +16,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.erendogan6.planmyworkout.coreui.base.BaseFragment;
-
 import com.erendogan6.planmyworkout.feature.home.R;
 import com.erendogan6.planmyworkout.feature.home.databinding.FragmentHomeBinding;
 import com.erendogan6.planmyworkout.feature.home.viewmodel.HomeViewModel;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -59,27 +63,28 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        // Set up create workout plan section
-//        binding.layoutCreateHeader.setOnClickListener(v -> {
-//            // Toggle visibility of create options
-//            boolean isVisible = binding.layoutCreateOptions.getVisibility() == View.VISIBLE;
-//            binding.layoutCreateOptions.setVisibility(isVisible ? View.GONE : View.VISIBLE);
-//            // Rotate arrow based on expanded state
-//            binding.ivExpandArrow.setRotation(isVisible ? 0 : 180);
-//        });
-//
-//        // Set up create options buttons
-//        binding.btnReadyMadePlan.setOnClickListener(v ->
-//                Navigation.findNavController(requireView())
-//                        .navigate(R.id.action_homeFragment_to_readyMadePlansFragment));
-//
-//        binding.btnBuildOwnPlan.setOnClickListener(v ->
-//                Navigation.findNavController(requireView())
-//                        .navigate(R.id.action_homeFragment_to_createPlanFragment));
-//
-//        binding.btnGenerateAI.setOnClickListener(v ->
-//                Navigation.findNavController(requireView())
-//                        .navigate(R.id.action_homeFragment_to_aiGeneratePlanFragment));
+        binding.btnPlanMenu.setOnClickListener(this::showPlanMenu);
+    }
+
+    private void showPlanMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(requireContext(), anchor);
+        popup.getMenuInflater().inflate(R.menu.plan_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.action_rename_plan) {
+                showRenamePlanDialog();
+                return true;
+            } else if (id == R.id.action_delete_plan) {
+                showDeletePlanDialog();
+                return true;
+            }
+
+            return false;
+        });
+
+        popup.show();
     }
 
     private void observeViewModel() {
@@ -130,12 +135,92 @@ public class HomeFragment extends BaseFragment {
                 // Show the plan layout and hide the no plan message
                 binding.tvNoWorkoutPlan.setVisibility(View.GONE);
                 binding.layoutCurrentPlan.setVisibility(View.VISIBLE);
+
+                // Show menu button when plan is available
+                binding.btnPlanMenu.setVisibility(View.VISIBLE);
             } else {
                 // No plan available, show the no plan message
                 binding.tvNoWorkoutPlan.setVisibility(View.VISIBLE);
                 binding.layoutCurrentPlan.setVisibility(View.GONE);
+
+                // Hide menu button when no plan
+                binding.btnPlanMenu.setVisibility(View.GONE);
             }
         });
+
+        // Observe plan update success
+        viewModel.getPlanUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(requireContext(), "Plan updated successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Observe error messages
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void showRenamePlanDialog() {
+        if (viewModel.getCurrentPlan().getValue() == null) return;
+
+        // Create custom dialog layout
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_rename_plan, null);
+
+        TextInputLayout inputLayout = dialogView.findViewById(R.id.tilPlanName);
+        TextInputEditText etPlanName = dialogView.findViewById(R.id.etPlanName);
+
+        // Set current plan name
+        String currentName = viewModel.getCurrentPlan().getValue().getName();
+        etPlanName.setText(currentName);
+        etPlanName.setSelection(currentName.length()); // Cursor at end
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Rename Plan")
+                .setView(dialogView)
+                .setPositiveButton("Save", null)
+                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String newName = etPlanName.getText().toString().trim();
+
+                if (newName.isEmpty()) {
+                    inputLayout.setError("Plan name cannot be empty");
+                    return;
+                }
+
+                if (newName.equals(currentName)) {
+                    dialog.dismiss();
+                    return;
+                }
+
+                // Update plan name
+                viewModel.updatePlanName(newName);
+                dialog.dismiss();
+            });
+        });
+
+        dialog.show();
+    }
+
+    private void showDeletePlanDialog() {
+        if (viewModel.getCurrentPlan().getValue() == null) return;
+
+        String planName = viewModel.getCurrentPlan().getValue().getName();
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Plan")
+                .setMessage("Are you sure you want to delete \"" + planName + "\"?\n\nThis action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    viewModel.deletePlan();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override
